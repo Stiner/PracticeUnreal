@@ -29,4 +29,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Damage")
 		float Damage;
+
+protected:
+	virtual void Destroyed() override;
+
+	UFUNCTION(Category = "Projectile")
+		void OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OthreComp, FVector NormalImpulse, const FHitResult& Hit);
+
+
 };
