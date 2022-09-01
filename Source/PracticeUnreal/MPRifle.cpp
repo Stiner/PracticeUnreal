@@ -1,6 +1,8 @@
 #include "MPRifle.h"
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "FirstPersonMPCharacter.h"
 #include "FirstPersonMPProjectile.h"
@@ -17,9 +19,7 @@ AMPRifle::AMPRifle()
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	WeaponMesh->SetupAttachment(RootComponent);
 
-	ProjectileClass = AFirstPersonMPProjectile::StaticClass();
-
-	FireRate = 0.25f;
+	FireRate = 0.1f;
 	_bIsFiringWeapon = false;
 }
 
@@ -41,20 +41,24 @@ void AMPRifle::StopFire()
 
 void AMPRifle::HandleFire_Implementation()
 {
-	AActor* actor = GetAttachParentActor();
-	if (actor)
-	{
-		APawn* instigator = actor->GetInstigator();
-		if (instigator)
-		{
-			FVector spawnLocation = WeaponMesh->GetSocketLocation(TEXT("Ammo"));
-			FRotator spawnRotation = GetActorRotation();
+	AActor* parentActor = GetAttachParentActor();
+    if (!parentActor)
+        return;
 
-			FActorSpawnParameters spawnParameters;
-			spawnParameters.Instigator = instigator;
-			spawnParameters.Owner = this;
+	APawn* instigator = parentActor->GetInstigator();
+    if (!instigator)
+        return;
 
-			AFirstPersonMPProjectile* spawnedProjectile = GetWorld()->SpawnActor<AFirstPersonMPProjectile>(spawnLocation, spawnRotation, spawnParameters);
-		}
-	}
+	APlayerController* playerController = GetWorld()->GetFirstPlayerController();
+    if (!playerController)
+        return;
+
+	FVector spawnLocation = WeaponMesh->GetSocketLocation(TEXT("Muzzle"));
+    FRotator spawnRotation = playerController->PlayerCameraManager->GetCameraRotation();
+
+    FActorSpawnParameters spawnParameters;
+    spawnParameters.Instigator = instigator;
+    spawnParameters.Owner = this;
+
+    AFirstPersonMPProjectile* projectile = GetWorld()->SpawnActor<AFirstPersonMPProjectile>(ProjectileClass, spawnLocation, spawnRotation, spawnParameters);
 }
