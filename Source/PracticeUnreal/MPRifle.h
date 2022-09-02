@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -9,35 +7,38 @@
 UCLASS()
 class PRACTICEUNREAL_API AMPRifle : public AActor
 {
-	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	AMPRifle();
+    GENERATED_BODY()
+
+public:
+    AMPRifle();
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Components")
-		class USphereComponent* SphereComponent;
+    UPROPERTY(EditDefaultsOnly, Category = "Components")
+        class USphereComponent* SphereComponent;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Components")
-		class USkeletalMeshComponent* WeaponMesh;
+    UPROPERTY(BlueprintReadWrite, Category = "Components")
+        class USkeletalMeshComponent* WeaponMesh;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Gameplay|Projectile")
-		TSubclassOf<class AFirstPersonMPProjectile> ProjectileClass;
+    UPROPERTY(BlueprintReadWrite, Category = "Gameplay|Projectile")
+        TSubclassOf<class AFirstPersonMPProjectile> ProjectileClass;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
-		float FireRate;
+    UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
+        class AFirstPersonMPCharacter* OwnerCharacter;
 
-	bool _bIsFiringWeapon;
+    UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
+        float FireRate;
 
-	UFUNCTION(BlueprintCallable, Category = "Gameplay")
-		void StartFire();
+    bool _bIsFiringWeapon;
+    FTimerHandle _firingTimer;
 
-	UFUNCTION(BlueprintCallable, Category = "Gameplay")
-		void StopFire();
+    UFUNCTION(BlueprintCallable, Category = "Gameplay")
+        void OnEquiped(class AFirstPersonMPCharacter* equipedCharacter);
 
-	UFUNCTION(Server, Reliable)
-		void HandleFire();
+    UFUNCTION(BlueprintCallable, Category = "Gameplay")
+        void StartFire();
 
-	FTimerHandle _firingTimer;
+    UFUNCTION(BlueprintCallable, Category = "Gameplay")
+        void StopFire();
+
+    void OnHandleFire();
 };

@@ -9,34 +9,40 @@
 UCLASS()
 class PRACTICEUNREAL_API AFirstPersonMPCharacter : public ACharacter
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	AFirstPersonMPCharacter();
+    AFirstPersonMPCharacter();
 
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+    void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UFUNCTION(BlueprintPure, Category = "Health")
-		FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
+    UFUNCTION(BlueprintPure, Category = "Health")
+        FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
 
-	UFUNCTION(BlueprintPure, Category = "Health")
-		FORCEINLINE float GetCurrentHealth() const { return CurrentHealth; }
+    UFUNCTION(BlueprintPure, Category = "Health")
+        FORCEINLINE float GetCurrentHealth() const { return CurrentHealth; }
 
-	UFUNCTION(BlueprintCallable, Category = "Health")
-		void SetCurrentHealth(float healthValue);
+    UFUNCTION(BlueprintCallable, Category = "Health")
+        void SetCurrentHealth(float healthValue);
 
-	UFUNCTION(BlueprintCallable, Category = "Health")
-		float TakeDamage(float damageTaken, struct FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser) override;
+    UFUNCTION(BlueprintCallable, Category = "Health")
+        float TakeDamage(float damageTaken, struct FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser) override;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Health")
-		float MaxHealth;
+    UPROPERTY(EditDefaultsOnly, Category = "Health")
+        float MaxHealth;
 
-	UPROPERTY(ReplicatedUsing = OnRep_CurrentHealth)
-		float CurrentHealth;
+    UPROPERTY(ReplicatedUsing = OnRep_CurrentHealth)
+        float CurrentHealth;
 
-	UFUNCTION()
-		void OnRep_CurrentHealth();
+    UFUNCTION()
+        void OnRep_CurrentHealth();
 
-	void OnHealthUpdate();
+    UFUNCTION(BlueprintCallable, Category = "Action")
+        void UseItem();
+
+    UFUNCTION(Server, Reliable)
+        void HandleFire();
+
+    void OnHealthUpdate();
 };
