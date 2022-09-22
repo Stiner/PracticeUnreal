@@ -32,9 +32,6 @@ protected:
     FTimerHandle _firingTimer;
 
     UFUNCTION(BlueprintCallable, Category = "Gameplay")
-        void OnEquiped(class AFirstPersonMPCharacter* equipedCharacter);
-
-    UFUNCTION(BlueprintCallable, Category = "Gameplay")
         void StartFire();
 
     UFUNCTION(BlueprintCallable, Category = "Gameplay")

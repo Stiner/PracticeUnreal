@@ -17,11 +17,6 @@ AMPRifle::AMPRifle()
     WeaponMesh->SetupAttachment(RootComponent);
 }
 
-void AMPRifle::OnEquiped(AFirstPersonMPCharacter* equipedCharacter)
-{
-    
-}
-
 void AMPRifle::StartFire()
 {
     if (!_bIsFiringWeapon)
@@ -50,6 +45,8 @@ void AMPRifle::OnHandleFire()
     APawn* instigator = OwnerCharacter->GetInstigator();
     if (!instigator)
         return;
+
+    
 
     APlayerController* playerController = GetWorld()->GetFirstPlayerController();
     if (!playerController)
