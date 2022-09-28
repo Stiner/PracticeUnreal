@@ -28,7 +28,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
         float FireRate;
 
-    bool _bIsFiringWeapon;
+    UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
+        bool IsFiringWeapon;
+
     FTimerHandle _firingTimer;
 
     UFUNCTION(BlueprintCallable, Category = "Gameplay")

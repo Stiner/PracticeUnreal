@@ -19,9 +19,9 @@ AMPRifle::AMPRifle()
 
 void AMPRifle::StartFire()
 {
-    if (!_bIsFiringWeapon)
+    if (!IsFiringWeapon)
     {
-        _bIsFiringWeapon = true;
+        IsFiringWeapon = true;
         UWorld* world = GetWorld();
         world->GetTimerManager().SetTimer(_firingTimer, this, &AMPRifle::StopFire, FireRate, false);
 
@@ -34,7 +34,7 @@ void AMPRifle::StartFire()
 
 void AMPRifle::StopFire()
 {
-    _bIsFiringWeapon = false;
+    IsFiringWeapon = false;
 }
 
 void AMPRifle::OnHandleFire()
@@ -45,8 +45,6 @@ void AMPRifle::OnHandleFire()
     APawn* instigator = OwnerCharacter->GetInstigator();
     if (!instigator)
         return;
-
-    
 
     APlayerController* playerController = GetWorld()->GetFirstPlayerController();
     if (!playerController)
