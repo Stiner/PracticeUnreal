@@ -45,8 +45,6 @@ void AFirstPersonMPCharacter::UseItem()
 
 void AFirstPersonMPCharacter::HandleFire_Implementation()
 {
-    FString msg = FString::Printf(TEXT("%s fire"), *GetName());
-    GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Magenta, msg);
 }
 
 void AFirstPersonMPCharacter::OnHealthUpdate()
