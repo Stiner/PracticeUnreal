@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "FirstPersonMPCharacter.generated.h"
 
+class AMPRfile;
+
 UCLASS()
 class PRACTICEUNREAL_API AFirstPersonMPCharacter : public ACharacter
 {
@@ -29,20 +31,29 @@ public:
         float TakeDamage(float damageTaken, struct FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser) override;
 
 protected:
+    UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
+        AMPRifle* Weapon;
+
     UPROPERTY(EditDefaultsOnly, Category = "Health")
         float MaxHealth;
 
     UPROPERTY(ReplicatedUsing = OnRep_CurrentHealth)
         float CurrentHealth;
 
-    UFUNCTION()
-        void OnRep_CurrentHealth();
+public:
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Action")
+        void EquipWeapon(const AMPRifle* equipWeapon);
+    virtual void EquipWeapon_Implementation(const AMPRifle* equipWeapon);
 
+protected:
     UFUNCTION(BlueprintCallable, Category = "Action")
-        void UseItem();
+        void UseWeapon();
 
     UFUNCTION(Server, Reliable)
-        void HandleFire();
+        void HandleFireOnServer();
+
+    UFUNCTION()
+        void OnRep_CurrentHealth();
 
     void OnHealthUpdate();
 };

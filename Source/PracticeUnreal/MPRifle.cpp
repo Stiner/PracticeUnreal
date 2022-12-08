@@ -17,45 +17,40 @@ AMPRifle::AMPRifle()
     WeaponMesh->SetupAttachment(RootComponent);
 }
 
+void AMPRifle::OnHandleFire_Implementation()
+{
+    if (!IsValid(OwnerCharacter))
+        return;
+
+    APawn* instigator = OwnerCharacter->GetInstigator();
+    if (!IsValid(instigator))
+        return;
+
+    FVector spawnLocation = WeaponMesh->GetSocketLocation(TEXT("Muzzle"));
+    FRotator spawnRotation = WeaponMesh->GetSocketRotation(TEXT("Muzzel"));
+
+    FActorSpawnParameters spawnParameters;
+    spawnParameters.Instigator = instigator;
+    spawnParameters.Owner = Owner;
+
+    AFirstPersonMPProjectile* projectile = GetWorld()->SpawnActor<AFirstPersonMPProjectile>(ProjectileClass, spawnLocation, spawnRotation, spawnParameters);
+}
+
 void AMPRifle::StartFire()
 {
     if (!IsFiringWeapon)
     {
         IsFiringWeapon = true;
+
         UWorld* world = GetWorld();
         world->GetTimerManager().SetTimer(_firingTimer, this, &AMPRifle::StopFire, FireRate, false);
 
         FString msg = FString::Printf(TEXT("Role:%d"), GetLocalRole());
         GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Magenta, msg);
-
-        OnHandleFire();
     }
 }
 
 void AMPRifle::StopFire()
 {
     IsFiringWeapon = false;
-}
-
-void AMPRifle::OnHandleFire()
-{
-    if (!OwnerCharacter)
-        return;
-
-    APawn* instigator = OwnerCharacter->GetInstigator();
-    if (!instigator)
-        return;
-
-    APlayerController* playerController = GetWorld()->GetFirstPlayerController();
-    if (!playerController)
-        return;
-
-    FVector spawnLocation = WeaponMesh->GetSocketLocation(TEXT("Muzzle"));
-    FRotator spawnRotation = playerController->PlayerCameraManager->GetCameraRotation();
-
-    FActorSpawnParameters spawnParameters;
-    spawnParameters.Instigator = instigator;
-    spawnParameters.Owner = this;
-
-    AFirstPersonMPProjectile* projectile = GetWorld()->SpawnActor<AFirstPersonMPProjectile>(ProjectileClass, spawnLocation, spawnRotation, spawnParameters);
 }

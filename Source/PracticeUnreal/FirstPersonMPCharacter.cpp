@@ -1,6 +1,7 @@
 #include "FirstPersonMPCharacter.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
+#include "MPRifle.h"
 
 AFirstPersonMPCharacter::AFirstPersonMPCharacter()
 {
@@ -17,6 +18,13 @@ void AFirstPersonMPCharacter::GetLifetimeReplicatedProps(TArray<FLifetimePropert
     DOREPLIFETIME(AFirstPersonMPCharacter, CurrentHealth);
 }
 
+float AFirstPersonMPCharacter::TakeDamage(float damageTaken, FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser)
+{
+    float damageApplied = CurrentHealth - damageTaken;
+    SetCurrentHealth(damageApplied);
+    return damageApplied;
+}
+
 void AFirstPersonMPCharacter::SetCurrentHealth(float healthValue)
 {
     if (GetLocalRole() == ROLE_Authority)
@@ -26,25 +34,9 @@ void AFirstPersonMPCharacter::SetCurrentHealth(float healthValue)
     }
 }
 
-float AFirstPersonMPCharacter::TakeDamage(float damageTaken, FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser)
-{
-    float damageApplied = CurrentHealth - damageTaken;
-    SetCurrentHealth(damageApplied);
-    return damageApplied;
-}
-
 void AFirstPersonMPCharacter::OnRep_CurrentHealth()
 {
     OnHealthUpdate();
-}
-
-void AFirstPersonMPCharacter::UseItem()
-{
-    HandleFire();
-}
-
-void AFirstPersonMPCharacter::HandleFire_Implementation()
-{
 }
 
 void AFirstPersonMPCharacter::OnHealthUpdate()
@@ -68,4 +60,23 @@ void AFirstPersonMPCharacter::OnHealthUpdate()
     }
 
     // TOOD
+}
+
+void AFirstPersonMPCharacter::EquipWeapon_Implementation(const AMPRifle* equipWeapon)
+{
+}
+
+void AFirstPersonMPCharacter::UseWeapon()
+{
+    if (IsValid(Weapon))
+    {
+        Weapon->OnHandleFire();
+    }
+
+    HandleFireOnServer();
+}
+
+void AFirstPersonMPCharacter::HandleFireOnServer_Implementation()
+{
+    
 }
