@@ -13,6 +13,19 @@ class PRACTICEUNREAL_API AFirstPersonMPCharacter : public ACharacter
 {
     GENERATED_BODY()
 
+protected:
+    UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
+        AMPRifle* Weapon;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Health")
+        float MaxHealth;
+
+    UPROPERTY(ReplicatedUsing = OnRep_CurrentHealth)
+        float CurrentHealth;
+
+    UPROPERTY(Replicated)
+        bool UsingWeapon;
+
 public:
     AFirstPersonMPCharacter();
 
@@ -30,27 +43,26 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Health")
         float TakeDamage(float damageTaken, struct FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser) override;
 
-protected:
-    UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
-        AMPRifle* Weapon;
-
-    UPROPERTY(EditDefaultsOnly, Category = "Health")
-        float MaxHealth;
-
-    UPROPERTY(ReplicatedUsing = OnRep_CurrentHealth)
-        float CurrentHealth;
-
-public:
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Action")
-        void EquipWeapon(const AMPRifle* equipWeapon);
-    virtual void EquipWeapon_Implementation(const AMPRifle* equipWeapon);
+        void EquipWeapon(AMPRifle* equipWeapon);
+    virtual void EquipWeapon_Implementation(AMPRifle* equipWeapon);
+
+    UFUNCTION(BlueprintNativeEvent, Category = "Action")
+        void UnequipWeapon();
+    virtual void UnequipWeapon_Implementation();
+
+    UFUNCTION(Category = "Action")
+        void OnEndUseWeapon();
 
 protected:
     UFUNCTION(BlueprintCallable, Category = "Action")
-        void UseWeapon();
+        void StartUseWeapon();
 
     UFUNCTION(Server, Reliable)
-        void HandleFireOnServer();
+        void StartUseWeapon_Server();
+
+    UFUNCTION(Server, Reliable)
+        void OnEndUseWeapon_Server();
 
     UFUNCTION()
         void OnRep_CurrentHealth();

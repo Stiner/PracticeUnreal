@@ -62,21 +62,51 @@ void AFirstPersonMPCharacter::OnHealthUpdate()
     // TOOD
 }
 
-void AFirstPersonMPCharacter::EquipWeapon_Implementation(const AMPRifle* equipWeapon)
+void AFirstPersonMPCharacter::EquipWeapon_Implementation(AMPRifle* equipWeapon)
 {
+    if (IsValid(equipWeapon))
+    {
+        if (IsValid(equipWeapon->Owner))
+            return;
+        if (IsValid(Weapon))
+            return;
+
+        Weapon = equipWeapon;
+
+        Weapon->SetOwner(this);
+    }
 }
 
-void AFirstPersonMPCharacter::UseWeapon()
+void AFirstPersonMPCharacter::UnequipWeapon_Implementation()
 {
     if (IsValid(Weapon))
     {
-        Weapon->OnHandleFire();
+        Weapon->SetOwner(nullptr);
+        Weapon = nullptr;
     }
-
-    HandleFireOnServer();
 }
 
-void AFirstPersonMPCharacter::HandleFireOnServer_Implementation()
+void AFirstPersonMPCharacter::StartUseWeapon()
 {
-    
+    if (IsValid(Weapon))
+    {
+        Weapon->StartFire();
+
+        StartUseWeapon_Server();
+    }
+}
+
+void AFirstPersonMPCharacter::OnEndUseWeapon()
+{
+    OnEndUseWeapon_Server();
+}
+
+void AFirstPersonMPCharacter::StartUseWeapon_Server_Implementation()
+{
+    UsingWeapon = true;
+}
+
+void AFirstPersonMPCharacter::OnEndUseWeapon_Server_Implementation()
+{
+    UsingWeapon = false;
 }

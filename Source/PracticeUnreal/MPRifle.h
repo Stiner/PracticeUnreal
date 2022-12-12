@@ -34,14 +34,19 @@ protected:
     FTimerHandle _firingTimer;
 
 public:
+    virtual void SetOwner(AActor* NewOwner) override;
+
+    UFUNCTION(BlueprintCallable, Category = "Gameplay")
+        void StartFire();
+
+protected:
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Gameplay")
         void OnHandleFire();
     virtual void OnHandleFire_Implementation();
 
-protected:
     UFUNCTION(BlueprintCallable, Category = "Gameplay")
-        void StartFire();
+        void EndFire();
 
-    UFUNCTION(BlueprintCallable, Category = "Gameplay")
-        void StopFire();
+    UFUNCTION(Server, Reliable)
+        void OnHandleFire_Server();
 };

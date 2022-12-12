@@ -15,14 +15,51 @@ AMPRifle::AMPRifle()
 
     WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
     WeaponMesh->SetupAttachment(RootComponent);
+
+    SetReplicates(true);
+}
+
+void AMPRifle::SetOwner(AActor* NewOwner)
+{
+    Super::SetOwner(NewOwner);
+
+    OwnerCharacter = Cast<AFirstPersonMPCharacter>(NewOwner);
+}
+
+void AMPRifle::StartFire()
+{
+    if (!IsFiringWeapon)
+    {
+        IsFiringWeapon = true;
+
+        UWorld* world = GetWorld();
+        world->GetTimerManager().SetTimer(_firingTimer, this, &AMPRifle::EndFire, FireRate, false);
+
+        OnHandleFire();
+        //OnHandleFire_Server();
+    }
+}
+
+void AMPRifle::EndFire()
+{
+    IsFiringWeapon = false;
+
+    if (IsValid(OwnerCharacter))
+    {
+        OwnerCharacter->OnEndUseWeapon();
+    }
 }
 
 void AMPRifle::OnHandleFire_Implementation()
 {
-    if (!IsValid(OwnerCharacter))
+}
+
+void AMPRifle::OnHandleFire_Server_Implementation()
+{
+    if (!IsValid(GetOwner()))
         return;
 
-    APawn* instigator = OwnerCharacter->GetInstigator();
+    APawn* instigator = GetOwner()->GetInstigator();
     if (!IsValid(instigator))
         return;
 
@@ -36,23 +73,4 @@ void AMPRifle::OnHandleFire_Implementation()
     spawnParameters.Owner = Owner;
 
     AFirstPersonMPProjectile* projectile = GetWorld()->SpawnActor<AFirstPersonMPProjectile>(ProjectileClass, spawnLocation, spawnRotation, spawnParameters);
-}
-
-void AMPRifle::StartFire()
-{
-    if (!IsFiringWeapon)
-    {
-        IsFiringWeapon = true;
-
-        UWorld* world = GetWorld();
-        world->GetTimerManager().SetTimer(_firingTimer, this, &AMPRifle::StopFire, FireRate, false);
-
-        FString msg = FString::Printf(TEXT("Role:%d"), GetLocalRole());
-        GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Magenta, msg);
-    }
-}
-
-void AMPRifle::StopFire()
-{
-    IsFiringWeapon = false;
 }
