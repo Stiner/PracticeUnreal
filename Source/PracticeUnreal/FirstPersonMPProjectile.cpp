@@ -58,7 +58,7 @@ void AFirstPersonMPProjectile::Destroyed()
 	UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionEffect, spawnLocation, FRotator::ZeroRotator, true, EPSCPoolMethod::AutoRelease);
 }
 
-void AFirstPersonMPProjectile::OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OthreComp, FVector NormalImpulse, const FHitResult& Hit)
+void AFirstPersonMPProjectile::OnProjectileImpact_Implementation(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OthreComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	if (OtherActor)
 	{

@@ -26,8 +26,10 @@ void AMPRifle::OnHandleFire_Implementation()
     if (!IsValid(instigator))
         return;
 
-    FVector spawnLocation = WeaponMesh->GetSocketLocation(TEXT("Muzzle"));
-    FRotator spawnRotation = WeaponMesh->GetSocketRotation(TEXT("Muzzel"));
+    FVector spawnLocation;
+    FRotator spawnRotation;
+
+    WeaponMesh->GetSocketWorldLocationAndRotation(TEXT("Muzzle"), spawnLocation, spawnRotation);
 
     FActorSpawnParameters spawnParameters;
     spawnParameters.Instigator = instigator;
