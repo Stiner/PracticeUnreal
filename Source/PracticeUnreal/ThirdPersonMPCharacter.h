@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "ThirdPersonMPCharacter.generated.h"
 
-class AMPRfile;
+class AThirdPersonMPWeapon;
 
 UCLASS()
 class PRACTICEUNREAL_API AThirdPersonMPCharacter : public ACharacter
@@ -15,7 +15,7 @@ class PRACTICEUNREAL_API AThirdPersonMPCharacter : public ACharacter
 
 protected:
     UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
-        AMPRifle* Weapon;
+        AThirdPersonMPWeapon* Weapon;
 
     UPROPERTY(EditDefaultsOnly, Category = "Health")
         float MaxHealth;
@@ -44,8 +44,8 @@ public:
         float TakeDamage(float damageTaken, struct FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser) override;
 
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Action")
-        void EquipWeapon(AMPRifle* equipWeapon);
-    virtual void EquipWeapon_Implementation(AMPRifle* equipWeapon);
+        void EquipWeapon(AThirdPersonMPWeapon* equipWeapon);
+    virtual void EquipWeapon_Implementation(AThirdPersonMPWeapon* equipWeapon);
 
     UFUNCTION(BlueprintNativeEvent, Category = "Action")
         void UnequipWeapon();

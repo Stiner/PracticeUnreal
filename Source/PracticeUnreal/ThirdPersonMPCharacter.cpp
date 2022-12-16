@@ -1,7 +1,7 @@
 #include "ThirdPersonMPCharacter.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
-#include "MPRifle.h"
+#include "ThirdPersonMPWeapon.h"
 
 AThirdPersonMPCharacter::AThirdPersonMPCharacter()
 {
@@ -62,7 +62,7 @@ void AThirdPersonMPCharacter::OnHealthUpdate()
     // TOOD
 }
 
-void AThirdPersonMPCharacter::EquipWeapon_Implementation(AMPRifle* equipWeapon)
+void AThirdPersonMPCharacter::EquipWeapon_Implementation(AThirdPersonMPWeapon* equipWeapon)
 {
     if (IsValid(equipWeapon))
     {

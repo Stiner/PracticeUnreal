@@ -1,10 +1,10 @@
-#include "MPRifle.h"
+#include "ThirdPersonMPWeapon.h"
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "ThirdPersonMPCharacter.h"
 #include "ThirdPersonMPProjectile.h"
 
-AMPRifle::AMPRifle()
+AThirdPersonMPWeapon::AThirdPersonMPWeapon()
 {
     PrimaryActorTick.bCanEverTick = true;
 
@@ -19,28 +19,28 @@ AMPRifle::AMPRifle()
     SetReplicates(true);
 }
 
-void AMPRifle::SetOwner(AActor* NewOwner)
+void AThirdPersonMPWeapon::SetOwner(AActor* NewOwner)
 {
     Super::SetOwner(NewOwner);
 
     OwnerCharacter = Cast<AThirdPersonMPCharacter>(NewOwner);
 }
 
-void AMPRifle::StartFire()
+void AThirdPersonMPWeapon::StartFire()
 {
     if (!IsFiringWeapon)
     {
         IsFiringWeapon = true;
 
         UWorld* world = GetWorld();
-        world->GetTimerManager().SetTimer(_firingTimer, this, &AMPRifle::EndFire, FireRate, false);
+        world->GetTimerManager().SetTimer(_firingTimer, this, &AThirdPersonMPWeapon::EndFire, FireRate, false);
 
         OnHandleFire();
         //OnHandleFire_Server();
     }
 }
 
-void AMPRifle::EndFire()
+void AThirdPersonMPWeapon::EndFire()
 {
     IsFiringWeapon = false;
 
@@ -50,11 +50,11 @@ void AMPRifle::EndFire()
     }
 }
 
-void AMPRifle::OnHandleFire_Implementation()
+void AThirdPersonMPWeapon::OnHandleFire_Implementation()
 {
 }
 
-void AMPRifle::OnHandleFire_Server_Implementation()
+void AThirdPersonMPWeapon::OnHandleFire_Server_Implementation()
 {
     if (!IsValid(GetOwner()))
         return;

@@ -2,17 +2,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "MPRifle.generated.h"
+#include "ThirdPersonMPWeapon.generated.h"
 
 class AThirdPersonMPCharacter;
 
 UCLASS()
-class PRACTICEUNREAL_API AMPRifle : public AActor
+class PRACTICEUNREAL_API AThirdPersonMPWeapon : public AActor
 {
     GENERATED_BODY()
 
 public:
-    AMPRifle();
+    AThirdPersonMPWeapon();
 
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
