@@ -1,8 +1,8 @@
 #include "MPRifle.h"
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "FirstPersonMPCharacter.h"
-#include "FirstPersonMPProjectile.h"
+#include "ThirdPersonMPCharacter.h"
+#include "ThirdPersonMPProjectile.h"
 
 AMPRifle::AMPRifle()
 {
@@ -23,7 +23,7 @@ void AMPRifle::SetOwner(AActor* NewOwner)
 {
     Super::SetOwner(NewOwner);
 
-    OwnerCharacter = Cast<AFirstPersonMPCharacter>(NewOwner);
+    OwnerCharacter = Cast<AThirdPersonMPCharacter>(NewOwner);
 }
 
 void AMPRifle::StartFire()
@@ -72,5 +72,5 @@ void AMPRifle::OnHandleFire_Server_Implementation()
     spawnParameters.Instigator = instigator;
     spawnParameters.Owner = Owner;
 
-    AFirstPersonMPProjectile* projectile = GetWorld()->SpawnActor<AFirstPersonMPProjectile>(ProjectileClass, spawnLocation, spawnRotation, spawnParameters);
+    AThirdPersonMPProjectile* projectile = GetWorld()->SpawnActor<AThirdPersonMPProjectile>(ProjectileClass, spawnLocation, spawnRotation, spawnParameters);
 }

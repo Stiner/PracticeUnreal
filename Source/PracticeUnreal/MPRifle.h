@@ -4,6 +4,8 @@
 #include "GameFramework/Actor.h"
 #include "MPRifle.generated.h"
 
+class AThirdPersonMPCharacter;
+
 UCLASS()
 class PRACTICEUNREAL_API AMPRifle : public AActor
 {
@@ -20,10 +22,10 @@ protected:
         class USkeletalMeshComponent* WeaponMesh;
 
     UPROPERTY(BlueprintReadWrite, Category = "Gameplay|Projectile")
-        TSubclassOf<class AFirstPersonMPProjectile> ProjectileClass;
+        TSubclassOf<class AThirdPersonMPCharacter> ProjectileClass;
 
     UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
-        class AFirstPersonMPCharacter* OwnerCharacter;
+        AThirdPersonMPCharacter* OwnerCharacter;
 
     UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
         float FireRate;
