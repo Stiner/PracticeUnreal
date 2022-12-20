@@ -62,7 +62,8 @@ void AThirdPersonMPProjectile::OnProjectileImpact_Implementation(UPrimitiveCompo
 {
 	if (OtherActor)
 	{
-		UGameplayStatics::ApplyPointDamage(OtherActor, Damage, NormalImpulse, Hit, GetInstigatorController(), this, DamageType);
+        TArray<AActor*> actorsToIgnore;
+		UGameplayStatics::ApplyRadialDamage(OtherActor, Damage, NormalImpulse, 100.0, DamageType, actorsToIgnore, GetInstigator(), GetInstigatorController(), true);
 	}
 
 	Destroy();

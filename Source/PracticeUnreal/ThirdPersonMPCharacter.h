@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "ThirdPersonGameCharacter.h"
 #include "ThirdPersonMPCharacter.generated.h"
 
 class AThirdPersonMPWeapon;
 
 UCLASS()
-class PRACTICEUNREAL_API AThirdPersonMPCharacter : public ACharacter
+class PRACTICEUNREAL_API AThirdPersonMPCharacter : public AThirdPersonGameCharacter
 {
     GENERATED_BODY()
 
@@ -17,31 +17,13 @@ protected:
     UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
         AThirdPersonMPWeapon* Weapon;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Health")
-        float MaxHealth;
-
-    UPROPERTY(ReplicatedUsing = OnRep_CurrentHealth)
-        float CurrentHealth;
-
     UPROPERTY(Replicated)
         bool UsingWeapon;
 
 public:
     AThirdPersonMPCharacter();
 
-    void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-    UFUNCTION(BlueprintPure, Category = "Health")
-        FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
-
-    UFUNCTION(BlueprintPure, Category = "Health")
-        FORCEINLINE float GetCurrentHealth() const { return CurrentHealth; }
-
-    UFUNCTION(BlueprintCallable, Category = "Health")
-        void SetCurrentHealth(float healthValue);
-
-    UFUNCTION(BlueprintCallable, Category = "Health")
-        float TakeDamage(float damageTaken, struct FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser) override;
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Action")
         void EquipWeapon(AThirdPersonMPWeapon* equipWeapon);
@@ -63,9 +45,4 @@ protected:
 
     UFUNCTION(Server, Reliable)
         void OnEndUseWeapon_Server();
-
-    UFUNCTION()
-        void OnRep_CurrentHealth();
-
-    void OnHealthUpdate();
 };
