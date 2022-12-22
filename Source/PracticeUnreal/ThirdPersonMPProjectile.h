@@ -33,8 +33,6 @@ public:
 protected:
 	virtual void Destroyed() override;
 
-	UFUNCTION(BlueprintNativeEvent, Category = "Projectile")
-		void OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OthreComp, FVector NormalImpulse, const FHitResult& Hit);
-    virtual void OnProjectileImpact_Implementation(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OthreComp, FVector NormalImpulse, const FHitResult& Hit);
-
+	UFUNCTION(Category = "Projectile")
+		void OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };

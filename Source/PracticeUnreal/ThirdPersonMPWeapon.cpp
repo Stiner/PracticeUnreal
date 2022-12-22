@@ -1,8 +1,10 @@
 #include "ThirdPersonMPWeapon.h"
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Engine/Classes/Animation/AnimMontage.h"
+#include "Engine/Classes/Sound/SoundBase.h"
+#include "Engine/Classes/Kismet/GameplayStatics.h"
 #include "ThirdPersonMPCharacter.h"
-#include "ThirdPersonMPProjectile.h"
 
 AThirdPersonMPWeapon::AThirdPersonMPWeapon()
 {
@@ -15,6 +17,18 @@ AThirdPersonMPWeapon::AThirdPersonMPWeapon()
 
     WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
     WeaponMesh->SetupAttachment(RootComponent);
+
+    SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AThirdPersonMPWeapon::OnComponentBeginOverlap);
+
+    static ConstructorHelpers::FObjectFinder<USoundBase> defaultSoundFinder(TEXT("/Game/FPWeapon/Audio/FirstPersonTemplateWeaponFire02.FirstPersonTemplateWeaponFire02"));
+    if (defaultSoundFinder.Succeeded())
+    {
+        WeaponSound = defaultSoundFinder.Object;
+    }
+
+    WeaponSoundLocation = FVector::ZeroVector;
+    TraceDistance = 10000.0f;
+    BaseDamage = 10.0f;
 
     SetReplicates(true);
 }
@@ -49,27 +63,28 @@ void AThirdPersonMPWeapon::EndFire()
     }
 }
 
-void AThirdPersonMPWeapon::OnHandleFire_Implementation()
+void AThirdPersonMPWeapon::OnComponentBeginOverlap(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+    AThirdPersonMPCharacter* character = Cast<AThirdPersonMPCharacter>(OtherActor);
+    if (IsValid(character))
+    {
+        character->EquipWeapon(this);
+    }
 }
 
-void AThirdPersonMPWeapon::OnHandleFire_Server_Implementation()
+void AThirdPersonMPWeapon::OnHandleFire_Implementation()
 {
-    if (!IsValid(GetOwner()))
-        return;
+    UGameplayStatics::PlaySoundAtLocation(this, WeaponSound, WeaponSoundLocation);
 
-    APawn* instigator = GetOwner()->GetInstigator();
-    if (!IsValid(instigator))
-        return;
+    if (IsValid(OwnerCharacter))
+    {
+        OwnerCharacter->PlayAnimMontage(FireFeedbackMotion);
 
-    FVector spawnLocation;
-    FRotator spawnRotation;
+        OnHandleFire_Server();
+    }
+}
 
-    WeaponMesh->GetSocketWorldLocationAndRotation(TEXT("Muzzle"), spawnLocation, spawnRotation);
+void AThirdPersonMPWeapon::OnHandleFire_Server_Implementation(FVector FireLocation, FRotator FireRotation)
+{
 
-    FActorSpawnParameters spawnParameters;
-    spawnParameters.Instigator = instigator;
-    spawnParameters.Owner = Owner;
-
-    AThirdPersonMPProjectile* projectile = GetWorld()->SpawnActor<AThirdPersonMPProjectile>(ProjectileClass, spawnLocation, spawnRotation, spawnParameters);
 }

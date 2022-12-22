@@ -5,6 +5,8 @@
 #include "ThirdPersonMPWeapon.generated.h"
 
 class AThirdPersonMPCharacter;
+class USoundBase;
+class UAnimMontage;
 
 UCLASS()
 class PRACTICEUNREAL_API AThirdPersonMPWeapon : public AActor
@@ -21,17 +23,29 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
         class USkeletalMeshComponent* WeaponMesh;
 
-    UPROPERTY(BlueprintReadWrite, Category = "Gameplay|Projectile")
-        TSubclassOf<class AThirdPersonMPCharacter> ProjectileClass;
-
-    UPROPERTY(BlueprintReadWrite, Category = "Gameplay")
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Gameplay")
         AThirdPersonMPCharacter* OwnerCharacter;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gameplay")
+        USoundBase* WeaponSound;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gameplay")
+        FVector WeaponSoundLocation;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gameplay")
+        UAnimMontage* FireFeedbackMotion;
 
     UPROPERTY(EditDefaultsOnly, Category = "Gameplay")
         float FireRate;
 
-    UPROPERTY(BlueprintReadOnly, Category = "Gameplay")
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Gameplay")
         bool IsFiringWeapon;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gameplay")
+        float TraceDistance;
+
+    UPROPERTY(EditdefaultsOnly, BlueprintReadWrite, Category = "Gameplay")
+        float BaseDamage;
 
     FTimerHandle _firingTimer;
 
@@ -42,13 +56,16 @@ public:
         void StartFire();
 
 protected:
+    UFUNCTION(BlueprintCallable, Category = "Gameplay")
+        void EndFire();
+
+    UFUNCTION(Category = "Gameplay")
+        void OnComponentBeginOverlap(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Gameplay")
         void OnHandleFire();
     virtual void OnHandleFire_Implementation();
 
-    UFUNCTION(BlueprintCallable, Category = "Gameplay")
-        void EndFire();
-
     UFUNCTION(Server, Reliable)
-        void OnHandleFire_Server();
+        void OnHandleFire_Server(FVector FireLocation, FRotator FireRotation);
 };
