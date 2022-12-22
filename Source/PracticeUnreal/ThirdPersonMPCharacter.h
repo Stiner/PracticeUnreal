@@ -29,7 +29,7 @@ public:
         void EquipWeapon(AThirdPersonMPWeapon* equipWeapon);
     virtual void EquipWeapon_Implementation(AThirdPersonMPWeapon* equipWeapon);
 
-    UFUNCTION(BlueprintNativeEvent, Category = "Action")
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Action")
         void UnequipWeapon();
     virtual void UnequipWeapon_Implementation();
 

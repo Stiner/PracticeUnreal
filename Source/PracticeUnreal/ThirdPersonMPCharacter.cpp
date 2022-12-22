@@ -19,26 +19,21 @@ void AThirdPersonMPCharacter::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 
 void AThirdPersonMPCharacter::EquipWeapon_Implementation(AThirdPersonMPWeapon* equipWeapon)
 {
-    if (IsValid(equipWeapon))
+    if (   IsValid(equipWeapon)
+        && !IsValid(equipWeapon->GetOwner())
+        && !IsValid(Weapon))
     {
-        if (IsValid(equipWeapon->Owner))
-            return;
-        if (IsValid(Weapon))
-            return;
-
         Weapon = equipWeapon;
-
         Weapon->SetOwner(this);
+        Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Weapon_R"));
     }
 }
 
 void AThirdPersonMPCharacter::UnequipWeapon_Implementation()
 {
-    if (IsValid(Weapon))
-    {
-        Weapon->SetOwner(nullptr);
-        Weapon = nullptr;
-    }
+    Weapon->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+    Weapon->SetOwner(nullptr);
+    Weapon = nullptr;
 }
 
 void AThirdPersonMPCharacter::StartUseWeapon()

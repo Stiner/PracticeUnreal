@@ -36,7 +36,6 @@ void AThirdPersonMPWeapon::StartFire()
         world->GetTimerManager().SetTimer(_firingTimer, this, &AThirdPersonMPWeapon::EndFire, FireRate, false);
 
         OnHandleFire();
-        //OnHandleFire_Server();
     }
 }
 
