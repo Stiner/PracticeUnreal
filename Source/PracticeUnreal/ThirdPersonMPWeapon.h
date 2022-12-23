@@ -67,5 +67,5 @@ protected:
     virtual void OnHandleFire_Implementation();
 
     UFUNCTION(Server, Reliable)
-        void OnHandleFire_Server(FVector FireLocation, FRotator FireRotation);
+        void OnHandleFire_Server(const FVector& FireLocation, const FRotator& FireRotation);
 };

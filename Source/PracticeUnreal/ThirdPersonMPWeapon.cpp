@@ -4,7 +4,13 @@
 #include "Engine/Classes/Animation/AnimMontage.h"
 #include "Engine/Classes/Sound/SoundBase.h"
 #include "Engine/Classes/Kismet/GameplayStatics.h"
+#include "Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "ThirdPersonMPCharacter.h"
+
+namespace
+{
+    static const TCHAR* FireSocketName = TEXT("Muzzle");
+}
 
 AThirdPersonMPWeapon::AThirdPersonMPWeapon()
 {
@@ -80,11 +86,39 @@ void AThirdPersonMPWeapon::OnHandleFire_Implementation()
     {
         OwnerCharacter->PlayAnimMontage(FireFeedbackMotion);
 
-        OnHandleFire_Server();
+        FTransform socketTransform = WeaponMesh->GetSocketTransform(FireSocketName, ERelativeTransformSpace::RTS_World);
+        FVector fireLocation = socketTransform.GetLocation();
+        FRotator fireRotation = socketTransform.Rotator();
+
+        OnHandleFire_Server(fireLocation, fireRotation);
     }
 }
 
-void AThirdPersonMPWeapon::OnHandleFire_Server_Implementation(FVector FireLocation, FRotator FireRotation)
+void AThirdPersonMPWeapon::OnHandleFire_Server_Implementation(const FVector& FireLocation, const FRotator& FireRotation)
 {
+    FVector fireStart = FireLocation;
+    FVector fireEnd = FireLocation + (UKismetMathLibrary::GetForwardVector(FireRotation) * TraceDistance);
+    ETraceTypeQuery traceChannel = UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_Visibility);
+    bool bTraceComplex = false;
+    TArray<AActor*> actorsToIgnore = { this, OwnerCharacter };
+    EDrawDebugTrace::Type drawDebugTraceType = EDrawDebugTrace::Type::ForDuration;
+    bool bIgnoreSelf = true;
 
+    FHitResult hitResult;
+    bool isHitted = UKismetSystemLibrary::LineTraceSingle(this, fireStart, fireEnd, traceChannel, bTraceComplex, actorsToIgnore, drawDebugTraceType, hitResult, bIgnoreSelf);
+
+    if (isHitted && hitResult.bBlockingHit)
+    {
+        AThirdPersonGameCharacter* gameCharacter = Cast<AThirdPersonGameCharacter>(hitResult.GetActor());
+        if (IsValid(gameCharacter))
+        {
+            AActor* damagedActor = gameCharacter;
+            float baseDamage = BaseDamage;
+            AController* eventInstigator = OwnerCharacter->GetInstigatorController();
+            AActor* damageCauser = this;
+            TSubclassOf<UDamageType> damageTypeClass = UDamageType::StaticClass();
+
+            UGameplayStatics::ApplyDamage(gameCharacter, baseDamage, eventInstigator, damageCauser, damageTypeClass);
+        }
+    }
 }
