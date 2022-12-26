@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "ThirdPersonGameCharacter.generated.h"
+#include "ThirdPersonBaseCharacter.generated.h"
 
 UCLASS()
-class PRACTICEUNREAL_API AThirdPersonGameCharacter : public ACharacter
+class PRACTICEUNREAL_API AThirdPersonBaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -20,7 +20,7 @@ protected:
 
 public:
 	// Sets default values for this character's properties
-	AThirdPersonGameCharacter();
+    AThirdPersonBaseCharacter();
 
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -31,14 +31,21 @@ public:
         FORCEINLINE float GetCurrentHealth() const { return CurrentHealth; }
 
     UFUNCTION(BlueprintCallable, Category = "Health")
-        void SetCurrentHealth(float healthValue);
-
-    UFUNCTION(BlueprintCallable, Category = "Health")
         float TakeDamage(float damageTaken, struct FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser) override;
 
+    UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Health")
+        void OnDead_Server();
+
 protected:
+    UFUNCTION(BlueprintCallable, Category = "Health")
+        void SetCurrentHealth(float healthValue);
+
     UFUNCTION()
         void OnRep_CurrentHealth();
 
     void OnHealthUpdate();
+
+    UFUNCTION(BlueprintNativeEvent, Category = "Health")
+        void Dead();
+    virtual void Dead_Implementation();
 };

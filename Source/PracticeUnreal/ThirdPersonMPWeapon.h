@@ -7,6 +7,7 @@
 class AThirdPersonMPCharacter;
 class USoundBase;
 class UAnimMontage;
+class UPrimitiveComponent;
 
 UCLASS()
 class PRACTICEUNREAL_API AThirdPersonMPWeapon : public AActor
@@ -50,6 +51,7 @@ protected:
     FTimerHandle _firingTimer;
 
 public:
+    virtual void BeginPlay() override;
     virtual void SetOwner(AActor* NewOwner) override;
 
     UFUNCTION(BlueprintCallable, Category = "Gameplay")
@@ -59,8 +61,8 @@ protected:
     UFUNCTION(BlueprintCallable, Category = "Gameplay")
         void EndFire();
 
-    UFUNCTION(Category = "Gameplay")
-        void OnComponentBeginOverlap(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+    UFUNCTION()
+        void OnBeginOverlap(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Gameplay")
         void OnHandleFire();

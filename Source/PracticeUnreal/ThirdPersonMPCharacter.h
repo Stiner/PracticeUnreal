@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ThirdPersonGameCharacter.h"
+#include "ThirdPersonBaseCharacter.h"
 #include "ThirdPersonMPCharacter.generated.h"
 
 class AThirdPersonMPWeapon;
 
 UCLASS()
-class PRACTICEUNREAL_API AThirdPersonMPCharacter : public AThirdPersonGameCharacter
+class PRACTICEUNREAL_API AThirdPersonMPCharacter : public AThirdPersonBaseCharacter
 {
     GENERATED_BODY()
 
@@ -41,7 +41,7 @@ protected:
         void StartUseWeapon();
 
     UFUNCTION(Server, Reliable)
-        void StartUseWeapon_Server();
+        void OnStartUseWeapon_Server();
 
     UFUNCTION(Server, Reliable)
         void OnEndUseWeapon_Server();

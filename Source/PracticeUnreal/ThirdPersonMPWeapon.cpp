@@ -9,7 +9,7 @@
 
 namespace
 {
-    static const TCHAR* FireSocketName = TEXT("Muzzle");
+#define WEAPON_SOCKET_NAME (TEXT("Muzzle"))
 }
 
 AThirdPersonMPWeapon::AThirdPersonMPWeapon()
@@ -19,12 +19,11 @@ AThirdPersonMPWeapon::AThirdPersonMPWeapon()
     SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
     SphereComponent->InitSphereRadius(32.0f);
     SphereComponent->SetCollisionProfileName(TEXT("OverlapAll"));
+
     RootComponent = SphereComponent;
 
     WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
     WeaponMesh->SetupAttachment(RootComponent);
-
-    SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AThirdPersonMPWeapon::OnComponentBeginOverlap);
 
     static ConstructorHelpers::FObjectFinder<USoundBase> defaultSoundFinder(TEXT("/Game/FPWeapon/Audio/FirstPersonTemplateWeaponFire02.FirstPersonTemplateWeaponFire02"));
     if (defaultSoundFinder.Succeeded())
@@ -37,6 +36,13 @@ AThirdPersonMPWeapon::AThirdPersonMPWeapon()
     BaseDamage = 10.0f;
 
     SetReplicates(true);
+}
+
+void AThirdPersonMPWeapon::BeginPlay()
+{
+    Super::BeginPlay();
+
+    SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AThirdPersonMPWeapon::OnBeginOverlap);
 }
 
 void AThirdPersonMPWeapon::SetOwner(AActor* NewOwner)
@@ -69,7 +75,7 @@ void AThirdPersonMPWeapon::EndFire()
     }
 }
 
-void AThirdPersonMPWeapon::OnComponentBeginOverlap(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AThirdPersonMPWeapon::OnBeginOverlap(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
     AThirdPersonMPCharacter* character = Cast<AThirdPersonMPCharacter>(OtherActor);
     if (IsValid(character))
@@ -80,13 +86,16 @@ void AThirdPersonMPWeapon::OnComponentBeginOverlap(UPrimitiveComponent* HitCompo
 
 void AThirdPersonMPWeapon::OnHandleFire_Implementation()
 {
-    UGameplayStatics::PlaySoundAtLocation(this, WeaponSound, WeaponSoundLocation);
+    FVector worldPositionSocket; FQuat worldRotationSocket;
+    WeaponMesh->GetSocketWorldLocationAndRotation(WEAPON_SOCKET_NAME, worldPositionSocket, worldRotationSocket);
+
+    UGameplayStatics::PlaySoundAtLocation(this, WeaponSound, worldPositionSocket);
 
     if (IsValid(OwnerCharacter))
     {
         OwnerCharacter->PlayAnimMontage(FireFeedbackMotion);
 
-        FTransform socketTransform = WeaponMesh->GetSocketTransform(FireSocketName, ERelativeTransformSpace::RTS_World);
+        FTransform socketTransform = WeaponMesh->GetSocketTransform(WEAPON_SOCKET_NAME, ERelativeTransformSpace::RTS_World);
         FVector fireLocation = socketTransform.GetLocation();
         FRotator fireRotation = socketTransform.Rotator();
 
@@ -109,7 +118,7 @@ void AThirdPersonMPWeapon::OnHandleFire_Server_Implementation(const FVector& Fir
 
     if (isHitted && hitResult.bBlockingHit)
     {
-        AThirdPersonGameCharacter* gameCharacter = Cast<AThirdPersonGameCharacter>(hitResult.GetActor());
+        AThirdPersonBaseCharacter* gameCharacter = Cast<AThirdPersonBaseCharacter>(hitResult.GetActor());
         if (IsValid(gameCharacter))
         {
             AActor* damagedActor = gameCharacter;

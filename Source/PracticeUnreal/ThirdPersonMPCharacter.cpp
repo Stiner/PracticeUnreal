@@ -1,9 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ThirdPersonMPCharacter.h"
-
 #include "Net/UnrealNetwork.h"
 #include "ThirdPersonMPWeapon.h"
+
+namespace
+{
+#define ATTACH_TO_BONE_NAME (TEXT("Weapon_R"))
+}
 
 AThirdPersonMPCharacter::AThirdPersonMPCharacter()
 {
@@ -25,7 +29,7 @@ void AThirdPersonMPCharacter::EquipWeapon_Implementation(AThirdPersonMPWeapon* e
     {
         Weapon = equipWeapon;
         Weapon->SetOwner(this);
-        Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Weapon_R"));
+        Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, ATTACH_TO_BONE_NAME);
     }
 }
 
@@ -42,7 +46,7 @@ void AThirdPersonMPCharacter::StartUseWeapon()
     {
         Weapon->StartFire();
 
-        StartUseWeapon_Server();
+        OnStartUseWeapon_Server();
     }
 }
 
@@ -51,7 +55,7 @@ void AThirdPersonMPCharacter::OnEndUseWeapon()
     OnEndUseWeapon_Server();
 }
 
-void AThirdPersonMPCharacter::StartUseWeapon_Server_Implementation()
+void AThirdPersonMPCharacter::OnStartUseWeapon_Server_Implementation()
 {
     UsingWeapon = true;
 }
