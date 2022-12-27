@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "ThirdPersonMPGameModeBase.generated.h"
 
+class AController;
+
 /**
  *
  */
@@ -17,9 +19,8 @@ class PRACTICEUNREAL_API AThirdPersonMPGameModeBase : public AGameModeBase
 public:
     AThirdPersonMPGameModeBase();
 
-    UFUNCTION(BlueprintNativeEvent, Category = "Gameplay")
-        void OnDeadPlayerCharacter();
+    UFUNCTION(BlueprintCallable, Category = "Gameplay")
+        void OnDeadPlayerCharacter(AController* deadPlayer);
 
-protected:
-    virtual void OnDeadPlayerCharacter_Implementation();
+    virtual void OnPostLogin(AController* NewPlayer) override;
 };

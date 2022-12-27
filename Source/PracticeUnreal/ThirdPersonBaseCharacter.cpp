@@ -81,6 +81,6 @@ void AThirdPersonBaseCharacter::Dead_Implementation()
     AThirdPersonMPGameModeBase* gameMode = Cast<AThirdPersonMPGameModeBase>(UGameplayStatics::GetGameMode(this));
     if (IsValid(gameMode))
     {
-        gameMode->OnDeadPlayerCharacter();
+        gameMode->OnDeadPlayerCharacter(GetController());
     }
 }

@@ -7,10 +7,7 @@
 #include "Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "ThirdPersonMPCharacter.h"
 
-namespace
-{
 #define WEAPON_SOCKET_NAME (TEXT("Muzzle"))
-}
 
 AThirdPersonMPWeapon::AThirdPersonMPWeapon()
 {
