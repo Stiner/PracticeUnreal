@@ -5,6 +5,7 @@
 #include "Engine/Classes/Sound/SoundBase.h"
 #include "Engine/Classes/Kismet/GameplayStatics.h"
 #include "Engine/Classes/Kismet/KismetMathLibrary.h"
+#include "Particles/ParticleSystem.h"
 #include "ThirdPersonMPCharacter.h"
 
 #define WEAPON_SOCKET_NAME (TEXT("Muzzle"))
@@ -26,6 +27,12 @@ AThirdPersonMPWeapon::AThirdPersonMPWeapon()
     if (defaultSoundFinder.Succeeded())
     {
         WeaponSound = defaultSoundFinder.Object;
+    }
+
+    static ConstructorHelpers::FObjectFinder<UParticleSystem> defaultExplosionEffect(TEXT("/Game/Particles/P_Explosion.P_Explosion"));
+    if (defaultExplosionEffect.Succeeded())
+    {
+        ExplosionEffect = defaultExplosionEffect.Object;
     }
 
     WeaponSoundLocation = FVector::ZeroVector;
@@ -125,6 +132,7 @@ void AThirdPersonMPWeapon::OnHandleFire_Server_Implementation(const FVector& Fir
             TSubclassOf<UDamageType> damageTypeClass = UDamageType::StaticClass();
 
             UGameplayStatics::ApplyDamage(gameCharacter, baseDamage, eventInstigator, damageCauser, damageTypeClass);
+            UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionEffect, hitResult.Location, FRotator::ZeroRotator, true, EPSCPoolMethod::AutoRelease);
         }
     }
 }

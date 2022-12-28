@@ -8,6 +8,7 @@ class AThirdPersonMPCharacter;
 class USoundBase;
 class UAnimMontage;
 class UPrimitiveComponent;
+class UParticleSystem;
 
 UCLASS()
 class PRACTICEUNREAL_API AThirdPersonMPWeapon : public AActor
@@ -29,6 +30,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gameplay")
         USoundBase* WeaponSound;
+
+    UPROPERTY(EditAnywhere, Category = "Gameplay")
+        UParticleSystem* ExplosionEffect;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gameplay")
         FVector WeaponSoundLocation;
