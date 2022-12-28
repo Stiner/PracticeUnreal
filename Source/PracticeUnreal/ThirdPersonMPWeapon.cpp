@@ -7,6 +7,7 @@
 #include "Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "Particles/ParticleSystem.h"
 #include "ThirdPersonMPCharacter.h"
+#include "ThirdPersonHitEmitter.h"
 
 #define WEAPON_SOCKET_NAME (TEXT("Muzzle"))
 
@@ -101,16 +102,16 @@ void AThirdPersonMPWeapon::OnHandleFire_Implementation()
 
         FTransform socketTransform = WeaponMesh->GetSocketTransform(WEAPON_SOCKET_NAME, ERelativeTransformSpace::RTS_World);
         FVector fireLocation = socketTransform.GetLocation();
-        FRotator fireRotation = socketTransform.Rotator();
+        FRotator fireDirection = socketTransform.Rotator();
 
-        OnHandleFire_Server(fireLocation, fireRotation);
+        OnHandleFire_Server(fireLocation, fireDirection);
     }
 }
 
-void AThirdPersonMPWeapon::OnHandleFire_Server_Implementation(const FVector& FireLocation, const FRotator& FireRotation)
+void AThirdPersonMPWeapon::OnHandleFire_Server_Implementation(const FVector& FireLocation, const FRotator& FireDirection)
 {
     FVector fireStart = FireLocation;
-    FVector fireEnd = FireLocation + (UKismetMathLibrary::GetForwardVector(FireRotation) * TraceDistance);
+    FVector fireEnd = FireLocation + (UKismetMathLibrary::GetForwardVector(FireDirection) * TraceDistance);
     ETraceTypeQuery traceChannel = UEngineTypes::ConvertToTraceType(ECollisionChannel::ECC_Visibility);
     bool bTraceComplex = false;
     TArray<AActor*> actorsToIgnore = { this, OwnerCharacter };
@@ -119,7 +120,6 @@ void AThirdPersonMPWeapon::OnHandleFire_Server_Implementation(const FVector& Fir
 
     FHitResult hitResult;
     bool isHitted = UKismetSystemLibrary::LineTraceSingle(this, fireStart, fireEnd, traceChannel, bTraceComplex, actorsToIgnore, drawDebugTraceType, hitResult, bIgnoreSelf);
-
     if (isHitted && hitResult.bBlockingHit)
     {
         AThirdPersonBaseCharacter* gameCharacter = Cast<AThirdPersonBaseCharacter>(hitResult.GetActor());
@@ -132,7 +132,8 @@ void AThirdPersonMPWeapon::OnHandleFire_Server_Implementation(const FVector& Fir
             TSubclassOf<UDamageType> damageTypeClass = UDamageType::StaticClass();
 
             UGameplayStatics::ApplyDamage(gameCharacter, baseDamage, eventInstigator, damageCauser, damageTypeClass);
-            UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionEffect, hitResult.Location, FRotator::ZeroRotator, true, EPSCPoolMethod::AutoRelease);
+
+            GetWorld()->SpawnActor<AThirdPersonHitEmitter>(hitResult.Location, FireDirection);
         }
     }
 }
