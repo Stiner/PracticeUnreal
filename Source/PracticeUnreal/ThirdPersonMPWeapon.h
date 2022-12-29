@@ -74,4 +74,7 @@ protected:
 
     UFUNCTION(Server, Reliable)
         void OnHandleFire_Server(const FVector& FireLocation, const FRotator& FireRotation);
+
+    UFUNCTION(NetMulticast, Reliable)
+        void OnHitFire_Multicast(const FVector& HitLocation, const FRotator& HitDirection);
 };

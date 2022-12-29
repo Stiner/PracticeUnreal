@@ -7,7 +7,6 @@
 #include "Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "Particles/ParticleSystem.h"
 #include "ThirdPersonMPCharacter.h"
-#include "ThirdPersonHitEmitter.h"
 
 #define WEAPON_SOCKET_NAME (TEXT("Muzzle"))
 
@@ -125,15 +124,28 @@ void AThirdPersonMPWeapon::OnHandleFire_Server_Implementation(const FVector& Fir
         AThirdPersonBaseCharacter* gameCharacter = Cast<AThirdPersonBaseCharacter>(hitResult.GetActor());
         if (IsValid(gameCharacter))
         {
-            AActor* damagedActor = gameCharacter;
-            float baseDamage = BaseDamage;
-            AController* eventInstigator = OwnerCharacter->GetInstigatorController();
-            AActor* damageCauser = this;
-            TSubclassOf<UDamageType> damageTypeClass = UDamageType::StaticClass();
+            if (HasAuthority())
+            {
+                AActor* damagedActor = gameCharacter;
+                float baseDamage = BaseDamage;
+                AController* eventInstigator = OwnerCharacter->GetInstigatorController();
+                AActor* damageCauser = this;
+                TSubclassOf<UDamageType> damageTypeClass = UDamageType::StaticClass();
 
-            UGameplayStatics::ApplyDamage(gameCharacter, baseDamage, eventInstigator, damageCauser, damageTypeClass);
-
-            GetWorld()->SpawnActor<AThirdPersonHitEmitter>(hitResult.Location, FireDirection);
+                UGameplayStatics::ApplyDamage(gameCharacter, baseDamage, eventInstigator, damageCauser, damageTypeClass);
+            }
         }
+
+        OnHitFire_Multicast(hitResult.Location, hitResult.ImpactNormal.Rotation());
+    }
+}
+
+void AThirdPersonMPWeapon::OnHitFire_Multicast_Implementation(const FVector& HitLocation, const FRotator& HitDirection)
+{
+    if (!HasAuthority())
+    {
+        FString msg = FString::Printf(TEXT("[Client] Baam! [%s] pos:%s"), *GetName(), *HitLocation.ToString());
+        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, msg);
+        UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionEffect, HitLocation, (-1 * HitDirection));
     }
 }
