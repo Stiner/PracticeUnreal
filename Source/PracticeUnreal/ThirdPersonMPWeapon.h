@@ -4,6 +4,8 @@
 #include "GameFramework/Actor.h"
 #include "ThirdPersonMPWeapon.generated.h"
 
+class USphereComponent;
+class USkeletalMeshComponent;
 class AThirdPersonMPCharacter;
 class USoundBase;
 class UAnimMontage;
@@ -20,10 +22,10 @@ public:
 
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
-        class USphereComponent* SphereComponent;
+        USphereComponent* SphereComponent;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
-        class USkeletalMeshComponent* WeaponMesh;
+        USkeletalMeshComponent* WeaponMesh;
 
     UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Gameplay")
         AThirdPersonMPCharacter* OwnerCharacter;

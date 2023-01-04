@@ -9,7 +9,7 @@
 UCLASS()
 class PRACTICEUNREAL_API AThirdPersonBaseCharacter : public ACharacter
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Health")
@@ -19,7 +19,7 @@ protected:
         float CurrentHealth;
 
 public:
-	// Sets default values for this character's properties
+    // Sets default values for this character's properties
     AThirdPersonBaseCharacter();
 
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

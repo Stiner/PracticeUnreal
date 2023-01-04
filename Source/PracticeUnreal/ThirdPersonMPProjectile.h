@@ -4,35 +4,40 @@
 #include "GameFramework/Actor.h"
 #include "ThirdPersonMPProjectile.generated.h"
 
+class USphereComponent;
+class UStaticMeshComponent;
+class UProjectileMovementComponent;
+class UParticleSystem;
+
 UCLASS()
 class PRACTICEUNREAL_API AThirdPersonMPProjectile : public AActor
 {
-	GENERATED_BODY()
-	
-public:	
-	AThirdPersonMPProjectile();
+    GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-		class USphereComponent* SphereComponent;
+public:
+    AThirdPersonMPProjectile();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadonly, category = "Components")
-		class UStaticMeshComponent* StaticMesh;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+        USphereComponent* SphereComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Components")
-		class UProjectileMovementComponent* ProjectileMovementComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadonly, category = "Components")
+        UStaticMeshComponent* StaticMesh;
 
-	UPROPERTY(EditAnywhere, Category = "Effects")
-		class UParticleSystem* ExplosionEffect;
+    UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Components")
+        UProjectileMovementComponent* ProjectileMovementComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Damage")
-		TSubclassOf<class UDamageType> DamageType;
+    UPROPERTY(EditAnywhere, Category = "Effects")
+        UParticleSystem* ExplosionEffect;
 
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Damage")
-		float Damage;
+    UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Damage")
+        TSubclassOf<class UDamageType> DamageType;
+
+    UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Damage")
+        float Damage;
 
 protected:
-	virtual void Destroyed() override;
+    virtual void Destroyed() override;
 
-	UFUNCTION(Category = "Projectile")
-		void OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+    UFUNCTION(Category = "Projectile")
+        void OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };
