@@ -78,3 +78,5 @@ DerivedDataCache/*
 
 # macOS
 .DS_Store
+Thumbs.db
+
