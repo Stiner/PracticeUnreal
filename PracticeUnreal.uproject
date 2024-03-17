@@ -32,6 +32,10 @@
 		{
 			"Name": "GameplayBehaviorSmartObjects",
 			"Enabled": true
+		},
+		{
+			"Name": "VisualStudioTools",
+			"Enabled": true
 		}
 	]
 }
