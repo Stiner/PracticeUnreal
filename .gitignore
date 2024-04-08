@@ -80,3 +80,6 @@ DerivedDataCache/*
 .DS_Store
 Thumbs.db
 
+# Other Source control
+.svn
+.hg
