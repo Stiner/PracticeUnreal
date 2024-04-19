@@ -3,19 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ThirdPersonBaseCharacter.h"
+#include "PUBaseCharacter.h"
 #include "PUCharacter.generated.h"
 
-class APUWeapon;
-
 UCLASS()
-class PRACTICEUNREAL_API APUCharacter : public AThirdPersonBaseCharacter
+class PRACTICEUNREAL_API APUCharacter : public APUBaseCharacter
 {
     GENERATED_BODY()
 
 protected:
     UPROPERTY(BlueprintReadWrite, Category = "Gameplay|Actor")
-    APUWeapon* Weapon;
+    TObjectPtr<class APUWeapon> Weapon;
 
     UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gameplay|Parameter")
     float WalkSpeedRate;
@@ -53,7 +51,7 @@ public:
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Gameplay|Action")
-    void EquipWeapon(APUWeapon* equipWeapon);
+    void EquipWeapon(class APUWeapon* equipWeapon);
 
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Gameplay|Action")
     void UnequipWeapon();
@@ -62,7 +60,7 @@ public:
     void OnEndUseWeapon();
 
 protected:
-    virtual void EquipWeapon_Implementation(APUWeapon* equipWeapon);
+    virtual void EquipWeapon_Implementation(class APUWeapon* equipWeapon);
     virtual void UnequipWeapon_Implementation();
 
     UFUNCTION(BlueprintCallable, Category = "Gameplay|Action")

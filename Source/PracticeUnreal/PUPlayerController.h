@@ -6,12 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "PUPlayerController.generated.h"
 
-/**
- *
- */
 UCLASS()
 class PRACTICEUNREAL_API APUPlayerController : public APlayerController
 {
     GENERATED_BODY()
-
 };

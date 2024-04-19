@@ -1,7 +1,7 @@
 ﻿// Practice Unreal by Stiner
 
 #include "PUGameModeBase.h"
-#include "Engine/Classes/Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "PUPlayerController.h"
 
 APUGameModeBase::APUGameModeBase()

@@ -19,19 +19,18 @@ protected:
     float CurrentHealth;
 
 public:
-    // Sets default values for this character's properties
     APUBaseCharacter();
 
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
     UFUNCTION(BlueprintPure, Category = "Health")
-    FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
+    float GetMaxHealth() const { return MaxHealth; }
 
     UFUNCTION(BlueprintPure, Category = "Health")
-    FORCEINLINE float GetCurrentHealth() const { return CurrentHealth; }
+    float GetCurrentHealth() const { return CurrentHealth; }
 
     UFUNCTION(BlueprintCallable, Category = "Health")
-    float TakeDamage(float damageTaken, struct FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser) override;
+    float TakeDamage(float damageTaken, struct FDamageEvent const& damageEvent, class AController* eventInstigator, class AActor* damageCauser) override;
 
     UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Health")
     void OnDead_Server();
@@ -47,5 +46,4 @@ protected:
 
     UFUNCTION(BlueprintNativeEvent, Category = "Health")
     void Dead();
-    virtual void Dead_Implementation();
 };

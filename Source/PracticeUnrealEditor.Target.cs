@@ -1,15 +1,15 @@
-// Practice Unreal by Stiner
+﻿// Practice Unreal by Stiner
 
 using UnrealBuildTool;
-using System.Collections.Generic;
 
 public class PracticeUnrealEditorTarget : TargetRules
 {
-	public PracticeUnrealEditorTarget(TargetInfo Target) : base(Target)
-	{
-		Type = TargetType.Editor;
-		DefaultBuildSettings = BuildSettingsVersion.V2;
+    public PracticeUnrealEditorTarget(TargetInfo Target) : base(Target)
+    {
+        Type = TargetType.Editor;
+        DefaultBuildSettings = BuildSettingsVersion.Latest;
+        IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
 
-		ExtraModuleNames.AddRange( new string[] { "PracticeUnreal" } );
-	}
+        ExtraModuleNames.AddRange(new string[] { "PracticeUnreal" });
+    }
 }

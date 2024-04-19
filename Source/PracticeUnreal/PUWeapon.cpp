@@ -3,10 +3,10 @@
 #include "PUWeapon.h"
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Engine/Classes/Animation/AnimMontage.h"
-#include "Engine/Classes/Sound/SoundBase.h"
-#include "Engine/Classes/Kismet/GameplayStatics.h"
-#include "Engine/Classes/Kismet/KismetMathLibrary.h"
+#include "Animation/AnimMontage.h"
+#include "Sound/SoundBase.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Particles/ParticleSystem.h"
 #include "PUCharacter.h"
 
@@ -123,7 +123,7 @@ void APUWeapon::OnHandleFire_Server_Implementation(const FVector& FireLocation, 
     bool isHitted = UKismetSystemLibrary::LineTraceSingle(this, fireStart, fireEnd, traceChannel, bTraceComplex, actorsToIgnore, drawDebugTraceType, hitResult, bIgnoreSelf);
     if (isHitted && hitResult.bBlockingHit)
     {
-        AThirdPersonBaseCharacter* gameCharacter = Cast<AThirdPersonBaseCharacter>(hitResult.GetActor());
+        APUBaseCharacter* gameCharacter = Cast<APUBaseCharacter>(hitResult.GetActor());
         if (IsValid(gameCharacter))
         {
             if (HasAuthority())

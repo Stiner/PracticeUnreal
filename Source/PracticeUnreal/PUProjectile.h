@@ -6,11 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "PUProjectile.generated.h"
 
-class USphereComponent;
-class UStaticMeshComponent;
-class UProjectileMovementComponent;
-class UParticleSystem;
-
 UCLASS()
 class PRACTICEUNREAL_API APUProjectile : public AActor
 {
@@ -20,16 +15,16 @@ public:
     APUProjectile();
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-    USphereComponent* SphereComponent;
+    TObjectPtr<class USphereComponent> SphereComponent;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadonly, category = "Components")
-    UStaticMeshComponent* StaticMesh;
+    TObjectPtr<class UStaticMeshComponent> StaticMesh;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Components")
-    UProjectileMovementComponent* ProjectileMovementComponent;
+    TObjectPtr<class UProjectileMovementComponent> ProjectileMovementComponent;
 
     UPROPERTY(EditAnywhere, Category = "Effects")
-    UParticleSystem* ExplosionEffect;
+    TObjectPtr<class UParticleSystem> ExplosionEffect;
 
     UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Damage")
     TSubclassOf<class UDamageType> DamageType;
@@ -41,5 +36,5 @@ protected:
     virtual void Destroyed() override;
 
     UFUNCTION(Category = "Projectile")
-    void OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+    void OnProjectileImpact(class UPrimitiveComponent* HitComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };
