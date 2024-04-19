@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "ThirdPersonMPProjectile.generated.h"
+#include "PUProjectile.generated.h"
 
 class USphereComponent;
 class UStaticMeshComponent;
@@ -10,34 +10,34 @@ class UProjectileMovementComponent;
 class UParticleSystem;
 
 UCLASS()
-class PRACTICEUNREAL_API AThirdPersonMPProjectile : public AActor
+class PRACTICEUNREAL_API APUProjectile : public AActor
 {
     GENERATED_BODY()
 
 public:
-    AThirdPersonMPProjectile();
+    APUProjectile();
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-        USphereComponent* SphereComponent;
+    USphereComponent* SphereComponent;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadonly, category = "Components")
-        UStaticMeshComponent* StaticMesh;
+    UStaticMeshComponent* StaticMesh;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Components")
-        UProjectileMovementComponent* ProjectileMovementComponent;
+    UProjectileMovementComponent* ProjectileMovementComponent;
 
     UPROPERTY(EditAnywhere, Category = "Effects")
-        UParticleSystem* ExplosionEffect;
+    UParticleSystem* ExplosionEffect;
 
     UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Damage")
-        TSubclassOf<class UDamageType> DamageType;
+    TSubclassOf<class UDamageType> DamageType;
 
     UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Damage")
-        float Damage;
+    float Damage;
 
 protected:
     virtual void Destroyed() override;
 
     UFUNCTION(Category = "Projectile")
-        void OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+    void OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };

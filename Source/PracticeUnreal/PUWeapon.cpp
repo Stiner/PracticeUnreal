@@ -1,4 +1,4 @@
-#include "ThirdPersonMPWeapon.h"
+﻿#include "PUWeapon.h"
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/Classes/Animation/AnimMontage.h"
@@ -6,11 +6,11 @@
 #include "Engine/Classes/Kismet/GameplayStatics.h"
 #include "Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "Particles/ParticleSystem.h"
-#include "ThirdPersonMPCharacter.h"
+#include "PUCharacter.h"
 
 #define WEAPON_SOCKET_NAME (TEXT("Muzzle"))
 
-AThirdPersonMPWeapon::AThirdPersonMPWeapon()
+APUWeapon::APUWeapon()
 {
     PrimaryActorTick.bCanEverTick = true;
 
@@ -42,34 +42,34 @@ AThirdPersonMPWeapon::AThirdPersonMPWeapon()
     SetReplicates(true);
 }
 
-void AThirdPersonMPWeapon::BeginPlay()
+void APUWeapon::BeginPlay()
 {
     Super::BeginPlay();
 
-    SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AThirdPersonMPWeapon::OnBeginOverlap);
+    SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &APUWeapon::OnBeginOverlap);
 }
 
-void AThirdPersonMPWeapon::SetOwner(AActor* NewOwner)
+void APUWeapon::SetOwner(AActor* NewOwner)
 {
     Super::SetOwner(NewOwner);
 
-    OwnerCharacter = Cast<AThirdPersonMPCharacter>(NewOwner);
+    OwnerCharacter = Cast<APUCharacter>(NewOwner);
 }
 
-void AThirdPersonMPWeapon::StartFire()
+void APUWeapon::StartFire()
 {
     if (!IsFiringWeapon)
     {
         IsFiringWeapon = true;
 
         UWorld* world = GetWorld();
-        world->GetTimerManager().SetTimer(_firingTimer, this, &AThirdPersonMPWeapon::EndFire, FireRate, false);
+        world->GetTimerManager().SetTimer(_firingTimer, this, &APUWeapon::EndFire, FireRate, false);
 
         OnHandleFire();
     }
 }
 
-void AThirdPersonMPWeapon::EndFire()
+void APUWeapon::EndFire()
 {
     IsFiringWeapon = false;
 
@@ -79,16 +79,16 @@ void AThirdPersonMPWeapon::EndFire()
     }
 }
 
-void AThirdPersonMPWeapon::OnBeginOverlap(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void APUWeapon::OnBeginOverlap(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    AThirdPersonMPCharacter* character = Cast<AThirdPersonMPCharacter>(OtherActor);
+    APUCharacter* character = Cast<APUCharacter>(OtherActor);
     if (IsValid(character))
     {
         character->EquipWeapon(this);
     }
 }
 
-void AThirdPersonMPWeapon::OnHandleFire_Implementation()
+void APUWeapon::OnHandleFire_Implementation()
 {
     FVector worldPositionSocket; FQuat worldRotationSocket;
     WeaponMesh->GetSocketWorldLocationAndRotation(WEAPON_SOCKET_NAME, worldPositionSocket, worldRotationSocket);
@@ -107,7 +107,7 @@ void AThirdPersonMPWeapon::OnHandleFire_Implementation()
     }
 }
 
-void AThirdPersonMPWeapon::OnHandleFire_Server_Implementation(const FVector& FireLocation, const FRotator& FireDirection)
+void APUWeapon::OnHandleFire_Server_Implementation(const FVector& FireLocation, const FRotator& FireDirection)
 {
     FVector fireStart = FireLocation;
     FVector fireEnd = FireLocation + (UKismetMathLibrary::GetForwardVector(FireDirection) * TraceDistance);
@@ -140,7 +140,7 @@ void AThirdPersonMPWeapon::OnHandleFire_Server_Implementation(const FVector& Fir
     }
 }
 
-void AThirdPersonMPWeapon::OnHitFire_Multicast_Implementation(const FVector& HitLocation, const FRotator& HitDirection)
+void APUWeapon::OnHitFire_Multicast_Implementation(const FVector& HitLocation, const FRotator& HitDirection)
 {
     if (!HasAuthority())
     {
