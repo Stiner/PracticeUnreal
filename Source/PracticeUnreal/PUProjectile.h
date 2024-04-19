@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿// Practice Unreal by Stiner
+
+#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"

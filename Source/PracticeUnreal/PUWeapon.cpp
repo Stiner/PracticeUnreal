@@ -1,4 +1,6 @@
-﻿#include "PUWeapon.h"
+﻿// Practice Unreal by Stiner
+
+#include "PUWeapon.h"
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/Classes/Animation/AnimMontage.h"

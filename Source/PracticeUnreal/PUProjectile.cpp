@@ -1,4 +1,6 @@
-﻿#include "PUProjectile.h"
+﻿// Practice Unreal by Stiner
+
+#include "PUProjectile.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
