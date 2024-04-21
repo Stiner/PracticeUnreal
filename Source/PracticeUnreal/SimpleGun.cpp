@@ -1,6 +1,6 @@
 ﻿// Practice Unreal by Stiner
 
-#include "PUWeapon.h"
+#include "SimpleGun.h"
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/AnimMontage.h"
@@ -8,11 +8,11 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Particles/ParticleSystem.h"
-#include "PUCharacter.h"
+#include "PlayerCharacter.h"
 
 #define WEAPON_SOCKET_NAME (TEXT("Muzzle"))
 
-APUWeapon::APUWeapon()
+ASimpleGun::ASimpleGun()
 {
     PrimaryActorTick.bCanEverTick = true;
 
@@ -25,18 +25,6 @@ APUWeapon::APUWeapon()
     WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
     WeaponMesh->SetupAttachment(RootComponent);
 
-    static ConstructorHelpers::FObjectFinder<USoundBase> defaultSoundFinder(TEXT("/Game/FPWeapon/Audio/FirstPersonTemplateWeaponFire02.FirstPersonTemplateWeaponFire02"));
-    if (defaultSoundFinder.Succeeded())
-    {
-        WeaponSound = defaultSoundFinder.Object;
-    }
-
-    static ConstructorHelpers::FObjectFinder<UParticleSystem> defaultExplosionEffect(TEXT("/Game/Particles/P_Explosion.P_Explosion"));
-    if (defaultExplosionEffect.Succeeded())
-    {
-        ExplosionEffect = defaultExplosionEffect.Object;
-    }
-
     WeaponSoundLocation = FVector::ZeroVector;
     TraceDistance = 10000.0f;
     BaseDamage = 10.0f;
@@ -44,35 +32,25 @@ APUWeapon::APUWeapon()
     SetReplicates(true);
 }
 
-void APUWeapon::BeginPlay()
+void ASimpleGun::StartUse()
 {
-    Super::BeginPlay();
+    Super::StartUse();
 
-    SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &APUWeapon::OnBeginOverlap);
-}
-
-void APUWeapon::SetOwner(AActor* NewOwner)
-{
-    Super::SetOwner(NewOwner);
-
-    OwnerCharacter = Cast<APUCharacter>(NewOwner);
-}
-
-void APUWeapon::StartFire()
-{
     if (!IsFiringWeapon)
     {
         IsFiringWeapon = true;
 
         UWorld* world = GetWorld();
-        world->GetTimerManager().SetTimer(_firingTimer, this, &APUWeapon::EndFire, FireRate, false);
+        world->GetTimerManager().SetTimer(_firingTimer, this, &ASimpleGun::EndUse, FireRate, false);
 
         OnHandleFire();
     }
 }
 
-void APUWeapon::EndFire()
+void ASimpleGun::EndUse()
 {
+    Super::EndUse();
+
     IsFiringWeapon = false;
 
     if (IsValid(OwnerCharacter))
@@ -81,16 +59,7 @@ void APUWeapon::EndFire()
     }
 }
 
-void APUWeapon::OnBeginOverlap(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-    APUCharacter* character = Cast<APUCharacter>(OtherActor);
-    if (IsValid(character))
-    {
-        character->EquipWeapon(this);
-    }
-}
-
-void APUWeapon::OnHandleFire_Implementation()
+void ASimpleGun::OnHandleFire_Implementation()
 {
     FVector worldPositionSocket; FQuat worldRotationSocket;
     WeaponMesh->GetSocketWorldLocationAndRotation(WEAPON_SOCKET_NAME, worldPositionSocket, worldRotationSocket);
@@ -109,7 +78,7 @@ void APUWeapon::OnHandleFire_Implementation()
     }
 }
 
-void APUWeapon::OnHandleFire_Server_Implementation(const FVector& FireLocation, const FRotator& FireDirection)
+void ASimpleGun::OnHandleFire_Server_Implementation(const FVector& FireLocation, const FRotator& FireDirection)
 {
     FVector fireStart = FireLocation;
     FVector fireEnd = FireLocation + (UKismetMathLibrary::GetForwardVector(FireDirection) * TraceDistance);
@@ -123,7 +92,7 @@ void APUWeapon::OnHandleFire_Server_Implementation(const FVector& FireLocation, 
     bool isHitted = UKismetSystemLibrary::LineTraceSingle(this, fireStart, fireEnd, traceChannel, bTraceComplex, actorsToIgnore, drawDebugTraceType, hitResult, bIgnoreSelf);
     if (isHitted && hitResult.bBlockingHit)
     {
-        APUBaseCharacter* gameCharacter = Cast<APUBaseCharacter>(hitResult.GetActor());
+        ABaseCharacter* gameCharacter = Cast<ABaseCharacter>(hitResult.GetActor());
         if (IsValid(gameCharacter))
         {
             if (HasAuthority())
@@ -142,7 +111,7 @@ void APUWeapon::OnHandleFire_Server_Implementation(const FVector& FireLocation, 
     }
 }
 
-void APUWeapon::OnHitFire_Multicast_Implementation(const FVector& HitLocation, const FRotator& HitDirection)
+void ASimpleGun::OnHitFire_Multicast_Implementation(const FVector& HitLocation, const FRotator& HitDirection)
 {
     if (!HasAuthority())
     {

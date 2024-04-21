@@ -1,6 +1,6 @@
 ﻿// Practice Unreal by Stiner
 
-#include "PUProjectile.h"
+#include "SimpleProjectile.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -9,7 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
-APUProjectile::APUProjectile()
+ASimpleProjectile::ASimpleProjectile()
 {
     PrimaryActorTick.bCanEverTick = true;
 
@@ -18,29 +18,16 @@ APUProjectile::APUProjectile()
     SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
     SphereComponent->InitSphereRadius(37.5f);
     SphereComponent->SetCollisionProfileName(TEXT("BlockAllDynamic"));
+
     RootComponent = SphereComponent;
 
     if (GetLocalRole() == ROLE_Authority)
     {
-        SphereComponent->OnComponentHit.AddDynamic(this, &APUProjectile::OnProjectileImpact);
+        SphereComponent->OnComponentHit.AddDynamic(this, &ASimpleProjectile::OnProjectileImpact);
     }
 
-    static ConstructorHelpers::FObjectFinder<UStaticMesh> defaultMesh(TEXT("/Game/FPWeapon/Mesh/FirstPersonProjectileMesh.FirstPersonProjectileMesh"));
     StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
     StaticMesh->SetupAttachment(RootComponent);
-
-    if (defaultMesh.Succeeded())
-    {
-        StaticMesh->SetStaticMesh(defaultMesh.Object);
-        StaticMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -37.5f));
-        StaticMesh->SetRelativeScale3D(FVector(0.75f, 0.75f, 0.75f));
-    }
-
-    static ConstructorHelpers::FObjectFinder<UParticleSystem> defaultExplosionEffect(TEXT("/Game/Particles/P_Explosion.P_Explosion"));
-    if (defaultExplosionEffect.Succeeded())
-    {
-        ExplosionEffect = defaultExplosionEffect.Object;
-    }
 
     ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile"));
     ProjectileMovementComponent->SetUpdatedComponent(SphereComponent);
@@ -54,13 +41,13 @@ APUProjectile::APUProjectile()
     Damage = 10.0f;
 }
 
-void APUProjectile::Destroyed()
+void ASimpleProjectile::Destroyed()
 {
     FVector spawnLocation = GetActorLocation();
     UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionEffect, spawnLocation, FRotator::ZeroRotator, true, EPSCPoolMethod::AutoRelease);
 }
 
-void APUProjectile::OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ASimpleProjectile::OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
     if (OtherActor)
     {

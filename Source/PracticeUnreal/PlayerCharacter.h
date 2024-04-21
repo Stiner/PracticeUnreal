@@ -3,17 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PUBaseCharacter.h"
-#include "PUCharacter.generated.h"
+#include "BaseCharacter.h"
+#include "PlayerCharacter.generated.h"
 
 UCLASS()
-class PRACTICEUNREAL_API APUCharacter : public APUBaseCharacter
+class PRACTICEUNREAL_API APlayerCharacter : public ABaseCharacter
 {
     GENERATED_BODY()
 
 protected:
     UPROPERTY(BlueprintReadWrite, Category = "Gameplay|Actor")
-    TObjectPtr<class APUWeapon> Weapon;
+    TObjectPtr<class ABaseWeapon> Weapon;
 
     UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gameplay|Parameter")
     float WalkSpeedRate;
@@ -46,25 +46,24 @@ protected:
     bool IsCrouching;
 
 public:
-    APUCharacter();
+    APlayerCharacter();
 
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Gameplay|Action")
-    void EquipWeapon(class APUWeapon* equipWeapon);
+    void EquipWeapon(class ABaseWeapon* equipWeapon);
 
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Gameplay|Action")
     void UnequipWeapon();
 
     UFUNCTION(BlueprintCallable, Category = "Action")
-    void OnEndUseWeapon();
+    virtual void OnEndUseWeapon() override;
 
 protected:
-    virtual void EquipWeapon_Implementation(class APUWeapon* equipWeapon);
+    virtual void EquipWeapon_Implementation(class ABaseWeapon* equipWeapon);
     virtual void UnequipWeapon_Implementation();
 
-    UFUNCTION(BlueprintCallable, Category = "Gameplay|Action")
-    void StartUseWeapon();
+    virtual void StartUseWeapon() override;
 
     UFUNCTION(Server, Reliable, Category = "Gameplay|Server")
     void OnStartUseWeapon_Server();

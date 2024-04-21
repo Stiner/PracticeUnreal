@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "PUPlayerController.generated.h"
+#include "NetPlayerController.generated.h"
 
 UCLASS()
-class PRACTICEUNREAL_API APUPlayerController : public APlayerController
+class PRACTICEUNREAL_API ANetPlayerController : public APlayerController
 {
     GENERATED_BODY()
 };

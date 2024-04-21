@@ -1,12 +1,12 @@
 ﻿// Practice Unreal by Stiner
 
-#include "PUCharacter.h"
+#include "PlayerCharacter.h"
 #include "Net/UnrealNetwork.h"
-#include "PUWeapon.h"
+#include "BaseWeapon.h"
 
 #define ATTACH_TO_BONE_NAME (TEXT("Weapon_R"))
 
-APUCharacter::APUCharacter()
+APlayerCharacter::APlayerCharacter()
 {
     PrimaryActorTick.bCanEverTick = true;
 
@@ -15,17 +15,17 @@ APUCharacter::APUCharacter()
     TurnRateGamepad = 45.0f;
 }
 
-void APUCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-    DOREPLIFETIME(APUCharacter, UsingWeapon);
-    DOREPLIFETIME(APUCharacter, AimRotation);
-    DOREPLIFETIME(APUCharacter, IsIronsight);
-    DOREPLIFETIME(APUCharacter, IsCrouching);
+    DOREPLIFETIME(APlayerCharacter, UsingWeapon);
+    DOREPLIFETIME(APlayerCharacter, AimRotation);
+    DOREPLIFETIME(APlayerCharacter, IsIronsight);
+    DOREPLIFETIME(APlayerCharacter, IsCrouching);
 }
 
-void APUCharacter::EquipWeapon_Implementation(APUWeapon* equipWeapon)
+void APlayerCharacter::EquipWeapon_Implementation(ABaseWeapon* equipWeapon)
 {
     if (IsValid(equipWeapon)
         && !IsValid(equipWeapon->GetOwner())
@@ -37,39 +37,41 @@ void APUCharacter::EquipWeapon_Implementation(APUWeapon* equipWeapon)
     }
 }
 
-void APUCharacter::UnequipWeapon_Implementation()
+void APlayerCharacter::UnequipWeapon_Implementation()
 {
     Weapon->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
     Weapon->SetOwner(nullptr);
     Weapon = nullptr;
 }
 
-void APUCharacter::StartUseWeapon()
+void APlayerCharacter::StartUseWeapon()
 {
+    Super::StartUseWeapon();
+
     if (IsValid(Weapon))
     {
-        Weapon->StartFire();
+        Weapon->StartUse();
 
         OnStartUseWeapon_Server();
     }
 }
 
-void APUCharacter::OnEndUseWeapon()
+void APlayerCharacter::OnEndUseWeapon()
 {
     OnEndUseWeapon_Server();
 }
 
-void APUCharacter::OnStartUseWeapon_Server_Implementation()
+void APlayerCharacter::OnStartUseWeapon_Server_Implementation()
 {
     UsingWeapon = true;
 }
 
-void APUCharacter::OnEndUseWeapon_Server_Implementation()
+void APlayerCharacter::OnEndUseWeapon_Server_Implementation()
 {
     UsingWeapon = false;
 }
 
-void APUCharacter::UpdateAimDirection_Server_Implementation(FRotator rotation)
+void APlayerCharacter::UpdateAimDirection_Server_Implementation(FRotator rotation)
 {
     if (HasAuthority())
     {
@@ -77,7 +79,7 @@ void APUCharacter::UpdateAimDirection_Server_Implementation(FRotator rotation)
     }
 }
 
-void APUCharacter::UpdateIronsight_Server_Implementation(bool value)
+void APlayerCharacter::UpdateIronsight_Server_Implementation(bool value)
 {
     if (HasAuthority())
     {
@@ -85,7 +87,7 @@ void APUCharacter::UpdateIronsight_Server_Implementation(bool value)
     }
 }
 
-void APUCharacter::UpdateCrouch_Server_Implementation(bool value)
+void APlayerCharacter::UpdateCrouch_Server_Implementation(bool value)
 {
     if (HasAuthority())
     {
@@ -93,7 +95,7 @@ void APUCharacter::UpdateCrouch_Server_Implementation(bool value)
     }
 }
 
-void APUCharacter::OnRep_IsIronsight()
+void APlayerCharacter::OnRep_IsIronsight()
 {
     if (!HasAuthority())
     {
@@ -101,7 +103,7 @@ void APUCharacter::OnRep_IsIronsight()
     }
 }
 
-void APUCharacter::OnRep_IsCrouching()
+void APlayerCharacter::OnRep_IsCrouching()
 {
     if (!HasAuthority())
     {

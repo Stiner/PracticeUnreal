@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "PUGameModeBase.generated.h"
+#include "NetPlayGameMode.generated.h"
 
 UCLASS()
-class PRACTICEUNREAL_API APUGameModeBase : public AGameModeBase
+class PRACTICEUNREAL_API ANetPlayGameMode : public AGameModeBase
 {
     GENERATED_BODY()
 
 public:
-    APUGameModeBase();
+    ANetPlayGameMode();
 
     UFUNCTION(BlueprintCallable, Category = "Gameplay")
     void OnDeadPlayerCharacter(class AController* deadPlayer);

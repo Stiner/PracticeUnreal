@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "PUBaseCharacter.generated.h"
+#include "BaseCharacter.generated.h"
 
 UCLASS()
-class PRACTICEUNREAL_API APUBaseCharacter : public ACharacter
+class PRACTICEUNREAL_API ABaseCharacter : public ACharacter
 {
     GENERATED_BODY()
 
@@ -19,7 +19,7 @@ protected:
     float CurrentHealth;
 
 public:
-    APUBaseCharacter();
+    ABaseCharacter();
 
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -35,7 +35,12 @@ public:
     UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Health")
     void OnDead_Server();
 
+    virtual void OnEndUseWeapon();
+
 protected:
+    UFUNCTION(BlueprintCallable, Category = "Gameplay|Action")
+    virtual void StartUseWeapon();
+
     UFUNCTION(BlueprintCallable, Category = "Health")
     void SetCurrentHealth(float healthValue);
 

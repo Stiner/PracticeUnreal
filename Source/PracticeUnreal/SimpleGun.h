@@ -4,26 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "PUWeapon.generated.h"
+#include "BaseWeapon.h"
+#include "SimpleGun.generated.h"
 
 UCLASS()
-class PRACTICEUNREAL_API APUWeapon : public AActor
+class PRACTICEUNREAL_API ASimpleGun : public ABaseWeapon
 {
     GENERATED_BODY()
 
 public:
-    APUWeapon();
+    ASimpleGun();
 
 protected:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
-    TObjectPtr<class USphereComponent> SphereComponent;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
-    TObjectPtr<class USkeletalMeshComponent> WeaponMesh;
-
-    UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "Gameplay")
-    TObjectPtr<class APUCharacter> OwnerCharacter;
-
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Gameplay")
     TObjectPtr<class USoundBase> WeaponSound;
 
@@ -51,18 +43,12 @@ protected:
     FTimerHandle _firingTimer;
 
 public:
-    virtual void BeginPlay() override;
-    virtual void SetOwner(class AActor* NewOwner) override;
-
     UFUNCTION(BlueprintCallable, Category = "Gameplay")
-    void StartFire();
+    virtual void StartUse() override;
 
 protected:
     UFUNCTION(BlueprintCallable, Category = "Gameplay")
-    void EndFire();
-
-    UFUNCTION()
-    void OnBeginOverlap(class UPrimitiveComponent* HitComponent, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+    virtual void EndUse() override;
 
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Gameplay")
     void OnHandleFire();

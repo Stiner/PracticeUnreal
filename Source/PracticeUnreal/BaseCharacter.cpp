@@ -1,13 +1,13 @@
 ﻿// Practice Unreal by Stiner
 
-#include "PUBaseCharacter.h"
+#include "BaseCharacter.h"
 
 #include "Engine/Engine.h"
 #include "Net/UnrealNetwork.h"
 #include "Kismet/GameplayStatics.h"
-#include "PUGameModeBase.h"
+#include "NetPlayGameMode.h"
 
-APUBaseCharacter::APUBaseCharacter()
+ABaseCharacter::ABaseCharacter()
 {
     PrimaryActorTick.bCanEverTick = true;
 
@@ -15,14 +15,22 @@ APUBaseCharacter::APUBaseCharacter()
     CurrentHealth = MaxHealth;
 }
 
-void APUBaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-    DOREPLIFETIME(APUBaseCharacter, CurrentHealth);
+    DOREPLIFETIME(ABaseCharacter, CurrentHealth);
 }
 
-void APUBaseCharacter::SetCurrentHealth(float healthValue)
+void ABaseCharacter::OnEndUseWeapon()
+{
+}
+
+void ABaseCharacter::StartUseWeapon()
+{
+}
+
+void ABaseCharacter::SetCurrentHealth(float healthValue)
 {
     if (HasAuthority())
     {
@@ -31,12 +39,12 @@ void APUBaseCharacter::SetCurrentHealth(float healthValue)
     }
 }
 
-void APUBaseCharacter::OnRep_CurrentHealth()
+void ABaseCharacter::OnRep_CurrentHealth()
 {
     OnHealthUpdate();
 }
 
-void APUBaseCharacter::OnHealthUpdate()
+void ABaseCharacter::OnHealthUpdate()
 {
     if (HasAuthority())
     {
@@ -50,7 +58,7 @@ void APUBaseCharacter::OnHealthUpdate()
     }
 }
 
-float APUBaseCharacter::TakeDamage(float damageTaken, FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser)
+float ABaseCharacter::TakeDamage(float damageTaken, FDamageEvent const& damageEvent, AController* eventInstigator, AActor* damageCauser)
 {
     float damageApplied = CurrentHealth - damageTaken;
     SetCurrentHealth(damageApplied);
@@ -58,7 +66,7 @@ float APUBaseCharacter::TakeDamage(float damageTaken, FDamageEvent const& damage
     return damageApplied;
 }
 
-void APUBaseCharacter::OnDead_Server_Implementation()
+void ABaseCharacter::OnDead_Server_Implementation()
 {
     if (HasAuthority())
     {
@@ -69,14 +77,14 @@ void APUBaseCharacter::OnDead_Server_Implementation()
     }
 }
 
-void APUBaseCharacter::Dead_Implementation()
+void ABaseCharacter::Dead_Implementation()
 {
     FString dieMsg = FString::Printf(TEXT("%s DIE"), *GetName());
     GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, dieMsg);
 
     Destroy();
 
-    APUGameModeBase* gameMode = Cast<APUGameModeBase>(UGameplayStatics::GetGameMode(this));
+    ANetPlayGameMode* gameMode = Cast<ANetPlayGameMode>(UGameplayStatics::GetGameMode(this));
     if (IsValid(gameMode))
     {
         gameMode->OnDeadPlayerCharacter(GetController());

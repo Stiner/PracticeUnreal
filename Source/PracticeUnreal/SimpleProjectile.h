@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "PUProjectile.generated.h"
+#include "SimpleProjectile.generated.h"
 
 UCLASS()
-class PRACTICEUNREAL_API APUProjectile : public AActor
+class PRACTICEUNREAL_API ASimpleProjectile : public AActor
 {
     GENERATED_BODY()
 
 public:
-    APUProjectile();
+    ASimpleProjectile();
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     TObjectPtr<class USphereComponent> SphereComponent;
