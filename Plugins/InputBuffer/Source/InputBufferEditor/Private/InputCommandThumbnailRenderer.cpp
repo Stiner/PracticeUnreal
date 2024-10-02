@@ -38,7 +38,7 @@ void UInputCommandThumbnailRenderer::DrawTexture(UTexture2D* Texture, int32 X, i
 			1.0f,
 			1.0f,
 			FLinearColor::White,
-			Texture->Resource,
+			Texture->GetResource(),
 			true);
 	}
 }

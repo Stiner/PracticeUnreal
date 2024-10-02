@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "2.3",
+	"VersionName": "2.5",
 	"FriendlyName": "Visual Studio Integration Tools",
 	"Description": "Enables integration with Visual Studio IDE.",
 	"Category": "Programming",
@@ -10,7 +10,7 @@
 	"DocsURL": "",
 	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/362651520df94e4fa65492dbcba44ae2",
 	"SupportURL": "https://developercommunity.visualstudio.com/",
-	"EngineVersion": "5.3.0",
+	"EngineVersion": "5.4.0",
 	"CanContainContent": false,
 	"Installed": true,
 	"SupportedTargetPlatforms": [
