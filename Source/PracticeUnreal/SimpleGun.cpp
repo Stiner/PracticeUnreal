@@ -16,14 +16,20 @@ ASimpleGun::ASimpleGun()
 {
     PrimaryActorTick.bCanEverTick = true;
 
-    SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
-    SphereComponent->InitSphereRadius(32.0f);
-    SphereComponent->SetCollisionProfileName(TEXT("OverlapAll"));
+    if (SphereComponent == nullptr)
+    {
+        SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
+        SphereComponent->InitSphereRadius(32.0f);
+        SphereComponent->SetCollisionProfileName(TEXT("OverlapAll"));
 
-    RootComponent = SphereComponent;
+        RootComponent = SphereComponent;
+    }
 
-    WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-    WeaponMesh->SetupAttachment(RootComponent);
+    if (WeaponMesh == nullptr)
+    {
+        WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+        WeaponMesh->SetupAttachment(RootComponent);
+    }
 
     WeaponSoundLocation = FVector::ZeroVector;
     TraceDistance = 10000.0f;
