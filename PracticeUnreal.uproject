@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.4",
+	"EngineAssociation": "{C73E2027-4A16-6C65-2095-12B93EF97FEC}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -35,7 +35,14 @@
 		},
 		{
 			"Name": "VisualStudioTools",
-			"Enabled": true
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Win64"
+			]
+		},
+		{
+			"Name": "InputBuffer",
+			"Enabled": true,
 		}
 	]
 }
