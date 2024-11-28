@@ -1,7 +1,10 @@
-# Visual Studio 2015 user specific files
+# Visual Studio IDE user specific files
 .vs/
 
-# Rider
+# Visual Studio IDE config
+.vsconfig
+
+# Rider IDE user specific files
 .idea/
 
 # Compiled Object files
