@@ -1,4 +1,4 @@
-// Copyright 2018 Isaac Hsu.
+﻿// Copyright 2018 Isaac Hsu.
 
 #include "Misc/AutomationTest.h"
 #include "Tests/AutomationEditorCommon.h"
@@ -9,7 +9,7 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FInputBufferTest, "Plugins.InputBuffer.InputBuffer", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FInputBufferTest, "Plugins.InputBuffer.InputBuffer", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
 
 bool FInputBufferTest::RunTest(const FString& Parameters)
 {
