@@ -1,22 +1,38 @@
-{
-	"FileVersion": 3,
-	"EngineAssociation": "{C73E2027-4A16-6C65-2095-12B93EF97FEC}",
-	"Category": "",
-	"Description": "",
-	"Modules": [
-		{
-			"Name": "PracticeUnreal",
-			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"Engine"
-			]
-		}
-	],
-	"Plugins": [
-		{
-			"Name": "PCG",
-			"Enabled": true
-		}
-	]
+﻿{
+  "FileVersion": 3,
+  "EngineAssociation": "{C73E2027-4A16-6C65-2095-12B93EF97FEC}",
+  "Category": "",
+  "Description": "",
+  "Modules": [
+    {
+      "Name": "PracticeUnreal",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "PCG",
+      "Enabled": true
+    },
+    {
+      "Name": "ModelingToolsEditorMode",
+      "Enabled": true
+    },
+    {
+      "Name": "VisualStudioTools",
+      "Enabled": true
+    },
+    {
+      "Name": "RiderLink",
+      "Enabled": true
+    }
+  ],
+  "TargetPlatforms": [
+    "Win64",
+    "Mac"
+  ],
+  "AdditionalRootDirectories": [],
+  "AdditionalPluginDirectories": [],
+  "EpicSampleNameHash": ""
 }

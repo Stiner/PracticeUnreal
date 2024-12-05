@@ -1,16 +1,7 @@
 ﻿#include "MMDImporterBPLibrary.h"
-#include "AssetRegistry/AssetRegistryModule.h"
+#include "StaticMeshAttributes.h"
 #include "UObject/SavePackage.h"
-
-UMMDImporterBPLibrary::UMMDImporterBPLibrary(const FObjectInitializer& ObjectInitializer)
-: Super(ObjectInitializer)
-{
-}
-
-float UMMDImporterBPLibrary::MMDImporterSampleFunction(float Param)
-{
-	return -1;
-}
+#include "AssetRegistry/AssetRegistryModule.h"
 
 void UMMDImporterBPLibrary::Import(const FString& AssetName)
 {
@@ -27,7 +18,7 @@ void UMMDImporterBPLibrary::Import(const FString& AssetName)
         return;
 
     // NOTE: 새 에셋 생성시 반드시 Outer와 RF_Public, RF_Standalone 플래그를 지정 해 줘야 함.
-    UObject* NewAsset = CreateAsset(NewPackage, AssetName, RF_Public | RF_Standalone);
+    UObject* NewAsset = CreateMeshAsset(NewPackage, *AssetName, RF_Public | RF_Standalone);
     if (IsValid(NewAsset) == false)
         return;
 
@@ -44,13 +35,65 @@ void UMMDImporterBPLibrary::Import(const FString& AssetName)
     GEditor->SyncBrowserToObjects(ObjectsToSync);
 }
 
-UObject* UMMDImporterBPLibrary::CreateAsset(UObject* NewOuter, const FString& NewAssetName, const EObjectFlags NewFlags)
+UObject* UMMDImporterBPLibrary::CreateMeshAsset(UObject* NewOuter, const TCHAR* NewAssetName, const EObjectFlags NewFlags)
 {
-    UStaticMesh* NewStaticMesh = nullptr;
+    FMeshDescription MeshDesc;
 
-    NewStaticMesh = NewObject<UStaticMesh>(NewOuter, *NewAssetName, NewFlags);
+    FStaticMeshAttributes MeshAttributes(MeshDesc);
+    MeshAttributes.Register();
 
-    // TODO: 메쉬 구성
+    TVertexAttributesRef<FVector3f> Positions = MeshDesc.GetVertexPositions();
 
-    return NewStaticMesh;
+    MeshDesc.ReserveNewVertices(4);
+    FVertexID v0 = MeshDesc.CreateVertex();
+    FVertexID v1 = MeshDesc.CreateVertex();
+    FVertexID v2 = MeshDesc.CreateVertex();
+    FVertexID v3 = MeshDesc.CreateVertex();
+
+    MeshDesc.ReserveNewVertexInstances(4);
+    FVertexInstanceID vi0 = MeshDesc.CreateVertexInstance(v0);
+    FVertexInstanceID vi1 = MeshDesc.CreateVertexInstance(v1);
+    FVertexInstanceID vi2 = MeshDesc.CreateVertexInstance(v2);
+    FVertexInstanceID vi3 = MeshDesc.CreateVertexInstance(v3);
+
+    MeshDesc.ReserveNewUVs(4);
+    FUVID uv0 = MeshDesc.CreateUV();
+    FUVID uv1 = MeshDesc.CreateUV();
+    FUVID uv2 = MeshDesc.CreateUV();
+    FUVID uv3 = MeshDesc.CreateUV();
+
+    FPolygonGroupID polygonGroup = MeshDesc.CreatePolygonGroup();
+
+    MeshDesc.ReserveNewPolygons(1);
+    MeshDesc.CreatePolygon(polygonGroup, { vi0, vi1, vi2, vi3 });
+
+    Positions = MeshAttributes.GetVertexPositions();
+    Positions[0] = FVector3f(-100, -100, 0);
+    Positions[1] = FVector3f(-100, 100, 0);
+    Positions[2] = FVector3f(100, 100, 0);
+    Positions[3] = FVector3f(100, -100, 0);
+
+    TVertexInstanceAttributesRef<FVector3f> normals = MeshAttributes.GetVertexInstanceNormals();
+    normals[0] = FVector3f(0, 0, 1);
+    normals[1] = FVector3f(0, 0, 1);
+    normals[2] = FVector3f(0, 0, 1);
+    normals[3] = FVector3f(0, 0, 1);
+
+    TVertexInstanceAttributesRef<FVector2f> uvs = MeshAttributes.GetVertexInstanceUVs();
+    uvs[0] = FVector2f(0, 0);
+    uvs[1] = FVector2f(0, 1);
+    uvs[2] = FVector2f(1, 1);
+    uvs[3] = FVector2f(1, 0);
+
+    UStaticMesh* StaticMesh = NewObject<UStaticMesh>(NewOuter, NewAssetName, NewFlags);
+    StaticMesh->GetStaticMaterials().Add(FStaticMaterial());
+
+    UStaticMesh::FBuildMeshDescriptionsParams BuildMeshDescParams;
+    BuildMeshDescParams.bBuildSimpleCollision = true;
+
+    StaticMesh->NaniteSettings.bEnabled = true;
+
+    StaticMesh->BuildFromMeshDescriptions({ &MeshDesc }, BuildMeshDescParams);
+
+    return StaticMesh;
 }

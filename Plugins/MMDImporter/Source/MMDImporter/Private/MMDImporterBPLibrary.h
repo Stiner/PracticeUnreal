@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "MMDImporterBPLibrary.generated.h"
 
@@ -26,14 +27,12 @@ class UStaticMesh;
 UCLASS()
 class UMMDImporterBPLibrary : public UBlueprintFunctionLibrary
 {
-	GENERATED_UCLASS_BODY()
+    GENERATED_BODY()
 
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Execute Sample function", Keywords = "MMDImporter sample test testing"), Category = "MMDImporterTesting")
-	static float MMDImporterSampleFunction(float Param);
-
+public:
     UFUNCTION(BlueprintCallable, Category = "MMD Importer")
     static void Import(const FString& AssetName);
 
 protected:
-    static UObject* CreateAsset(UObject* OuterObject, const FString& AssetName, EObjectFlags NewFlags);
+    static UObject* CreateMeshAsset(UObject* OuterObject, const TCHAR* AssetName, EObjectFlags NewFlags);
 };
