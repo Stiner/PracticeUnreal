@@ -20,6 +20,9 @@
 * 사용자 지정 블루프린트 노드에 대한 자세한 내용은 설명서를 참조하세요.
 * https://wiki.unrealengine.com/Custom_Blueprint_Node_Creation
 */
+
+class UStaticMesh;
+
 UCLASS()
 class UMMDImporterBPLibrary : public UBlueprintFunctionLibrary
 {
@@ -29,5 +32,8 @@ class UMMDImporterBPLibrary : public UBlueprintFunctionLibrary
 	static float MMDImporterSampleFunction(float Param);
 
     UFUNCTION(BlueprintCallable, Category = "MMD Importer")
-    static void CreateMeshPackage(const FString& Name);
+    static void Import(const FString& AssetName);
+
+protected:
+    static UObject* CreateAsset(UObject* OuterObject, const FString& AssetName, EObjectFlags NewFlags);
 };
