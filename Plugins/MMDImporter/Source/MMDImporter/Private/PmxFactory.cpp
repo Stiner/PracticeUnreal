@@ -1,30 +1,44 @@
 ﻿// Practice Unreal by Stiner
+#include "PMXFactory.h"
+#include "PMXMeshData.h"
 
-
-#include "PmxFactory.h"
-
-UPmxFactory::UPmxFactory(const FObjectInitializer& ObjectInitializer)
+UPMXFactory::UPMXFactory(const FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)
 {
     Formats.Empty();
-    Formats.Add(TEXT("md;Markdown Document"));
+    Formats.Add(TEXT("pmd;PMD meshes and animations"));
+    Formats.Add(TEXT("pmx;PMX meshes and animations"));
+    Formats.Add(TEXT("md:Markdown Document"));
     
     bCreateNew = false;
     bText = false;
     bEditorImport = true;
 }
 
-UObject* UPmxFactory::FactoryCreateFile(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, const FString& Filename, const TCHAR* Parms, FFeedbackContext* Warn, bool& bOutOperationCanceled)
+UObject* UPMXFactory::FactoryCreateBinary(
+    UClass* InClass,
+    UObject* InParent,
+    FName InName,
+    EObjectFlags Flags,
+    UObject* Context,
+    const TCHAR* Type,
+    const uint8*& Buffer,
+    const uint8* BufferEnd,
+    FFeedbackContext* Warn,
+    bool& bOutOperationCanceled)
 {
-    return Super::FactoryCreateFile(InClass, InParent, InName, Flags, Filename, Parms, Warn, bOutOperationCanceled);
+    auto BufferSize = BufferEnd - Buffer;
+
+    PMXMeshData MeshData;
+    MeshData.LoadBinary(Buffer, BufferEnd);
+
+    FString a;
+
+
+    return nullptr;
 }
 
-UObject* UPmxFactory::FactoryCreateBinary(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, UObject* Context, const TCHAR* Type, const uint8*& Buffer, const uint8* BufferEnd, FFeedbackContext* Warn, bool& bOutOperationCanceled)
+UClass* UPMXFactory::ResolveSupportedClass()
 {
-    return Super::FactoryCreateBinary(InClass, InParent, InName, Flags, Context, Type, Buffer, BufferEnd, Warn, bOutOperationCanceled);
-}
-
-UClass* UPmxFactory::ResolveSupportedClass()
-{
-    return UPmxFactory::StaticClass();
+    return UPMXFactory::StaticClass();
 }
