@@ -16,6 +16,7 @@ public:
 
 protected:
     PMX::Header Header = { 0, };
+    PMX::ModelInfo ModelInfo;
 
     int VertexCount;
 

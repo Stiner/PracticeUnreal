@@ -4,19 +4,21 @@
 
 namespace PMX
 {
-    typedef unsigned char   byte;
+    typedef unsigned char   Byte;
 
     struct Vector2
     {
         float X;
         float Y;
     };
+
     struct Vector3
     {
         float X;
         float Y;
         float Z;
     };
+
     struct Vector4
     {
         float X;
@@ -25,47 +27,44 @@ namespace PMX
         float W;
     };
 
-    enum class TextEncoding
+    enum class TextEncodingType : PMX::Byte
     {
-        UTF16LE, UTF8,
+        UTF16LE,
+        UTF8,
     };
 
-    // TODO : Globals를 그냥 다 개별 변수로 따로 빼는걸 고민 해봐야 할 듯.
     struct Header
     {
         PMX::Byte Signature[4];     // "PMX " (0x50, 0x4d, 0x58, 0x20) : 공백으로 끝을 알림
         float Version;              // 2.0 / 2.1 : floating point 로 비교
-        PMX::Byte GlobalsCount;     // PMX 2.0은 8로 고정 됨. 가변적일 수 있음
-        PMX::Byte* Globals;       // GloabalsCount 크기 만큼의 버퍼
 
+        PMX::TextEncodingType TextEncoding;
+        PMX::Byte AdditionalVec4Count;
+        PMX::Byte VertexIndexSize;
+        PMX::Byte TextureIndexSize;
+        PMX::Byte MaterialIndexSize;
+        PMX::Byte BoneIndexSize;
+        PMX::Byte MorphIndexSize;
+        PMX::Byte RigidbodyIndexSize;
+    };
+
+    struct ModelInfo
+    {
         FString ModelNameLocal;     // 보통은 일본어
         FString ModelNameUniversal; // 보통은 영어
         FString CommentsLocal;      // 보통은 일본어
         FString CommentsUniversal;  // 보통은 영어
     };
 
-    // Header의 Globals 배열의 각 인덱스별 용도에 대한 정의
-    enum class GlobalsUsageByIndex
-    {
-        TextEncoding,           // 텍스트 인코딩: 인코딩 타입은 Text::Encoding에 정의
-        AdditionalVec4Count,    // 각 Vertex에 Vector4가 추가 여부 (0~4)
-        VertexIndexSize,        // The index type for vertices(See Index Types above)
-        TextureIndexSize,       // The index type for textures(See Index Types above)
-        MaterialIndexSize,      // The index type for materials(See Index Types above)
-        BoneIndexSize,          // The index type for bones(See Index Types above)
-        MorphIndexSize,         // The index type for morphs(See Index Types above)
-        RigidbodyIndexSize,     // The index type for rigid bodies(See Index Types above)
-    };
-
     struct BDEF1
     {
-        int32 Index;
+        int Index;
     };
 
     struct BDEF2
     {
-        int32 Index1;
-        int32 Index2;
+        int Index1;
+        int Index2;
 
         float Weight1;
         float Weight2; // = 1.0 - Weight1
@@ -73,10 +72,10 @@ namespace PMX
 
     struct BDEF4
     {
-        int32 Index1;
-        int32 Index2;
-        int32 Index3;
-        int32 Index4;
+        int Index1;
+        int Index2;
+        int Index3;
+        int Index4;
 
         float Weight1;
         float Weight2;
@@ -87,8 +86,8 @@ namespace PMX
     // Spherical deform blending
     struct SDEF
     {
-        int32 Index1;
-        int32 Index2;
+        int Index1;
+        int Index2;
         float Weight1;
         float Weight2; // = 1.0 - Weight1
 
@@ -100,10 +99,10 @@ namespace PMX
     // Dual quaternion deform blending
     struct QDEF
     {
-        int32 Index1;
-        int32 Index2;
-        int32 Index3;
-        int32 Index4;
+        int Index1;
+        int Index2;
+        int Index3;
+        int Index4;
 
         float Weight1; // 총 가중치는 1.0을 보장하지 않음
         float Weight2; // 총 가중치는 1.0을 보장하지 않음
